@@ -3,7 +3,7 @@
 const assets = [
   {
     "path": "./",
-    "sha256": "2748d93fae5acc1679000463a914ff66eca3698a916049549edc44950d562a39",
+    "sha256": "f4631dd9d70c3bea7dde9386fd0b5dc305554dc7dd3b3d471ec40f5bf004a6b7",
     "type": "text/html; charset=utf-8"
   },
   {
@@ -36,7 +36,7 @@ const scope = self.registration.scope;
 const indexUrl = new URL('index.html', scope).href;
 const staticUrls = new Set(assets.slice(1).map(({ path }) => new URL(path, scope).href));
 const cachePrefix = `go-travel-shell:${scope}:`;
-const cacheName = `${cachePrefix}018be8e6f552c14e`;
+const cacheName = `${cachePrefix}b2d80413dd497536`;
 
 async function verifiedAsset(asset) {
   const url = new URL(asset.path, scope).href;

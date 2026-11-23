@@ -642,7 +642,7 @@ h1, h2, h3 {
   box-shadow: var(--shadow-panel);
 }
 
-.section-heading, .plan-day-heading, .food-card-head {
+.section-heading, .food-card-head {
   display: flex;
   min-width: 0;
   flex-wrap: wrap;
@@ -831,6 +831,7 @@ h1, h2, h3 {
 
 .plan-day {
   min-width: 0;
+  border: 0;
 }
 
 .plan-day + .plan-day {
@@ -838,19 +839,56 @@ h1, h2, h3 {
 }
 
 .plan-day-heading {
-  min-height: 44px;
+  display: grid;
+  width: 100%;
+  min-height: var(--touch);
+  grid-template-columns: minmax(0, 1fr) max-content 16px;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border-radius: var(--radius-small);
   background: var(--neutral-soft);
   color: var(--muted);
   font-size: 13px;
+  list-style: none;
+  transition: background-color 160ms ease-out;
 }
 
-.plan-day-heading:is(h3), .plan-day-heading h3 {
+.plan-day-heading::-webkit-details-marker {
+  display: none;
+}
+
+.plan-day-date {
   color: var(--ink);
   font-size: 16px;
   font-weight: 650;
   overflow-wrap: anywhere;
+}
+
+.plan-day-count {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.plan-day-chevron {
+  width: 8px;
+  height: 8px;
+  justify-self: center;
+  transform: rotate(-45deg);
+  border-inline-end: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  color: var(--accent);
+  transition: transform 160ms ease-out;
+}
+
+.plan-day[open] .plan-day-chevron {
+  transform: rotate(45deg);
+}
+
+@media (hover: hover) {
+  .plan-day-heading:hover {
+    background: var(--accent-soft);
+  }
 }
 
 .plan-list, .food-list {
@@ -3076,7 +3114,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":10,"date":"2026-11-23","notes":["底部导航中间的入口改名为「AI记」。"]}</script>
+  <script type="application/json" id="app-release">{"version":11,"date":"2026-11-23","notes":["行程页的每日安排可以单独折叠或展开，收起后仍显示日期和安排数量。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -3412,6 +3450,7 @@ body:has(.travel-nav) .status {
   const plansOf = (trip) => trip?.itinerary || [];
   const restaurantsOf = (trip) => trip?.restaurants || [];
   const restaurantOf = (trip, id) => id ? restaurantsOf(trip).find((restaurant) => restaurant.id === id) : undefined;
+  const foldedDays = new Map();
   let editor;
 
   function dateLabel(date) {
@@ -3454,7 +3493,7 @@ body:has(.travel-nav) .status {
       ${item.time ? `<time class="plan-time" datetime="${escapeHtml(item.time)}">${escapeHtml(item.time)}</time>`
         : '<span class="plan-time">待定</span>'}
       <div class="plan-item-main">
-        <div class="plan-item-heading"><h4>${escapeHtml(item.title)}</h4><span class="plan-kind">${escapeHtml(item.kind || "其他")}</span></div>
+        <div class="plan-item-heading"><h3>${escapeHtml(item.title)}</h3><span class="plan-kind">${escapeHtml(item.kind || "其他")}</span></div>
         ${place ? `<p class="travel-meta">${escapeHtml(place)}</p>` : ""}
         ${item.notes ? `<p class="plan-notes">${escapeHtml(item.notes)}</p>` : ""}
       </div>
@@ -3467,10 +3506,18 @@ body:has(.travel-nav) .status {
 
   function render(trip, {escapeHtml}) {
     const days = daysOf(trip);
-    const items = [...days].map(([date, entries]) => `<section class="plan-day" aria-label="${escapeHtml(dateLabel(date))}">
-      <h3 class="plan-day-heading"><time datetime="${escapeHtml(date)}">${escapeHtml(dateLabel(date))}</time></h3>
-      <div class="plan-list">${entries.map((entry) => renderItem(entry, trip, escapeHtml)).join("")}</div>
-    </section>`).join("");
+    const folded = foldedDays.get(trip.id);
+    const items = [...days].map(([date, entries]) => {
+      const label = escapeHtml(dateLabel(date));
+      return `<details class="plan-day" data-trip-id="${escapeHtml(trip.id)}" data-date="${escapeHtml(date)}"${folded?.has(date) ? "" : " open"}>
+        <summary class="plan-day-heading">
+          <span class="plan-day-date">${date ? `<time datetime="${escapeHtml(date)}">${label}</time>` : label}</span>
+          <span class="plan-day-count">${entries.length} 项安排</span>
+          <span class="plan-day-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="plan-list">${entries.map((entry) => renderItem(entry, trip, escapeHtml)).join("")}</div>
+      </details>`;
+    }).join("");
 
     return `<section class="travel-panel itinerary-panel" aria-labelledby="plan-heading">
       <header class="section-heading">
@@ -3483,6 +3530,23 @@ body:has(.travel-nav) .status {
       ${items || '<div class="empty"><h3>还没有行程安排</h3><p>添加景点、交通或用餐安排，按天查看。</p></div>'}
     </section>`;
   }
+
+  function unfoldDay(tripId, date) {
+    const folded = foldedDays.get(tripId);
+    folded?.delete(date);
+    if (folded?.size === 0) foldedDays.delete(tripId);
+  }
+
+  document.addEventListener("toggle", ({target}) => {
+    if (!(target instanceof HTMLDetailsElement) || !target.matches(".plan-day[data-trip-id][data-date]")) return;
+    const {tripId, date} = target.dataset;
+    if (target.open) {
+      unfoldDay(tripId, date);
+    } else {
+      if (!foldedDays.has(tripId)) foldedDays.set(tripId, new Set());
+      foldedDays.get(tripId).add(date);
+    }
+  }, true);
 
   function bindCloseButtons(dialog) {
     for (const button of dialog.querySelectorAll("[data-plan-close]")) {
@@ -3632,6 +3696,7 @@ body:has(.travel-nav) .status {
       trip.itinerary = id ? entries.map((entry) => entry.id === id ? plan : entry) : [...entries, plan];
     }, sheet.querySelector("#plan-error"));
     if (!success) return;
+    unfoldDay(tripId, date);
     sheet.close();
     ctx.setView("itinerary");
     ctx.notify(id ? "安排已更新" : "已加入行程");
