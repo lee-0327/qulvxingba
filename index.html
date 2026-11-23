@@ -111,15 +111,18 @@ h1, h2, h3 {
 .topbar {
   display: flex;
   min-height: 72px;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 4px 12px;
+  padding-block: 8px;
 }
 
 .brand {
   display: inline-flex;
   min-width: 0;
   min-height: var(--touch);
+  flex: 0 0 auto;
   align-items: center;
   gap: 8px;
   color: var(--ink);
@@ -144,6 +147,8 @@ h1, h2, h3 {
 .top-actions {
   flex: 0 1 auto;
   justify-content: flex-end;
+  margin-inline-start: auto;
+  white-space: nowrap;
 }
 
 .button {
@@ -164,6 +169,26 @@ h1, h2, h3 {
   text-align: center;
   text-decoration: none;
   transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out;
+}
+
+.button.update-entry {
+  position: relative;
+  padding-inline: 7px;
+  background: transparent;
+  font-size: 13px;
+  letter-spacing: normal;
+  white-space: nowrap;
+}
+
+.update-indicator {
+  position: absolute;
+  inset-block-start: 7px;
+  inset-inline-end: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #84611b;
+  pointer-events: none;
 }
 
 .button.primary {
@@ -1361,6 +1386,26 @@ button.expense-row:active {
   font-size: 16px;
 }
 
+.update-release {
+  display: grid;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+
+.update-release p {
+  color: var(--muted);
+}
+
+.update-notes {
+  display: grid;
+  gap: 6px;
+  padding-inline-start: 20px;
+}
+
+.update-notes li::marker {
+  color: var(--accent);
+}
+
 .sheet .button.icon-button {
   font-size: 25px;
   font-weight: 450;
@@ -1803,6 +1848,7 @@ label.pill {
 
   .topbar {
     min-height: 65px;
+    column-gap: 8px;
   }
 
   .brand {
@@ -2096,6 +2142,7 @@ label.pill {
 
 </style>
   <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="trip-release-feed" content="./release.json">
   <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="去旅行吧">
@@ -2107,6 +2154,10 @@ label.pill {
     <header class="topbar">
       <div class="brand">
         <strong>去旅行吧</strong>
+        <button type="button" class="button update-entry" id="app-updates" aria-haspopup="dialog">
+          <span class="update-indicator" aria-hidden="true" hidden></span>
+          <span id="app-update-label">更新</span>
+        </button>
       </div>
       <div class="top-actions">
         <button type="button" class="button quiet" data-action="switch" id="switch-button" hidden>切换账本</button>
@@ -2214,8 +2265,28 @@ label.pill {
     </div>
   </dialog>
 
+  <dialog class="sheet update-sheet" id="update-sheet" aria-labelledby="update-heading">
+    <div class="sheet-head">
+      <h2 id="update-heading">版本更新</h2>
+      <button type="button" class="button icon-button quiet" data-close aria-label="关闭">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="update-release">
+        <p class="hint"><time id="update-date"></time></p>
+        <ul id="update-notes" class="update-notes"></ul>
+      </div>
+      <p id="update-status" class="hint" role="status" aria-live="polite" hidden></p>
+    </div>
+    <div class="sheet-actions">
+      <button type="button" class="button quiet" data-close>关闭</button>
+      <button type="button" class="button tonal" id="check-updates" hidden>检查更新</button>
+      <button type="button" class="button primary" id="apply-update" hidden>立即更新</button>
+    </div>
+  </dialog>
+
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
+  <script type="application/json" id="app-release">{"version":1,"date":"2026-11-23","notes":["旅行设置新增出发日期和到达日期，已有账本也可以补填。","行程封面显示日期区间和旅行天数，新增安排可在设定的日期范围内选择。","顶部新增更新入口，有新版本时会显示提示。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -4025,6 +4096,188 @@ label.pill {
   });
 
   refresh();
+})();
+
+;
+(() => {
+  "use strict";
+
+  const seenKey = "qingji-trip-release-seen";
+  const autoCheckInterval = 120000;
+  const requestTimeout = 8000;
+  const element = (id) => document.getElementById(id);
+  const validVersion = (value) => Number.isSafeInteger(value) && value > 0;
+
+  function embeddedRelease() {
+    try {
+      const release = JSON.parse(element("app-release")?.textContent || "null");
+      if (!validVersion(release?.version) || typeof release.date !== "string"
+        || !/^\d{4}-\d{2}-\d{2}$/.test(release.date) || !Array.isArray(release.notes)
+        || !release.notes.every((note) => typeof note === "string")) return null;
+      return release;
+    } catch {
+      return null;
+    }
+  }
+
+  function releaseFeed() {
+    const path = document.querySelector('meta[name="trip-release-feed"]')?.content.trim() || "";
+    if (!/^(?:\.\/)?release\.json$/.test(path) || !/^https?:$/.test(location.protocol)) return null;
+    const url = new URL(path, location.href);
+    return url.origin === location.origin ? url.href : null;
+  }
+
+  function readSeenVersion() {
+    try {
+      const value = localStorage.getItem(seenKey);
+      const version = Number(value);
+      return /^[1-9]\d*$/.test(value || "") && validVersion(version) ? version : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  const release = embeddedRelease();
+  const button = element("app-updates");
+  const label = element("app-update-label");
+  const indicator = button?.querySelector(".update-indicator");
+  const sheet = element("update-sheet");
+  const date = element("update-date");
+  const notes = element("update-notes");
+  const status = element("update-status");
+  const checkButton = element("check-updates");
+  const applyButton = element("apply-update");
+  if (!release || !button || !label || !indicator || !sheet || !date || !notes
+    || !status || !checkButton || !applyButton) return;
+
+  const feed = releaseFeed();
+  const normalLabel = label.textContent.trim() || "更新";
+  checkButton.hidden = !feed;
+  let seenVersion = readSeenVersion();
+  let confirmedVersion = release.version;
+  let lastAttemptAt = 0;
+  let pendingCheck;
+  let checkingManually = false;
+
+  date.textContent = release.date;
+  if (date instanceof HTMLTimeElement) date.dateTime = release.date;
+  notes.replaceChildren(...release.notes.map((note) => {
+    const item = document.createElement("li");
+    item.textContent = note;
+    return item;
+  }));
+
+  const hasNewVersion = () => confirmedVersion > release.version;
+  const isOnline = () => navigator.onLine !== false;
+  const foundVersionMessage = () => isOnline() ? "有新版本，点「立即更新」载入。" : "有新版本，联网后可以更新。";
+
+  function setStatus(message = "") {
+    status.hidden = !message;
+    status.textContent = message;
+  }
+
+  function syncControls() {
+    const newer = hasNewVersion();
+    label.textContent = newer ? "有新版本" : normalLabel;
+    indicator.hidden = !newer && seenVersion >= release.version;
+    applyButton.hidden = !newer;
+    applyButton.disabled = !isOnline();
+  }
+
+  function markCurrentReleaseSeen() {
+    seenVersion = Math.max(seenVersion, release.version, readSeenVersion());
+    try { localStorage.setItem(seenKey, String(seenVersion)); }
+    catch { /* Updates still work without persistent read markers. */ }
+    syncControls();
+  }
+
+  async function fetchReleaseVersion() {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), requestTimeout);
+    try {
+      const response = await fetch(feed, {
+        cache: "no-store",
+        credentials: "same-origin",
+        redirect: "error",
+        headers: {Accept: "application/json"},
+        signal: controller.signal
+      });
+      const type = response.headers.get("content-type") || "";
+      if (!response.ok || response.url !== feed || !/^application\/(?:json|[\w.+-]+\+json)(?:\s*;|\s*$)/i.test(type)) return null;
+      const data = await response.json();
+      return validVersion(data?.version) ? data.version : null;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  function launchCheck() {
+    if (pendingCheck) return pendingCheck;
+    lastAttemptAt = Date.now();
+    pendingCheck = fetchReleaseVersion().then((version) => {
+      if (version === null || version < release.version) return "unavailable";
+      confirmedVersion = Math.max(confirmedVersion, version);
+      syncControls();
+      return hasNewVersion() ? "new" : "current";
+    }).finally(() => { pendingCheck = undefined; });
+    return pendingCheck;
+  }
+
+  function autoCheck() {
+    if (!feed || document.visibilityState !== "visible" || !isOnline()
+      || pendingCheck || (lastAttemptAt && Date.now() - lastAttemptAt < autoCheckInterval)) return;
+    void launchCheck().then((result) => {
+      if (result === "new" && sheet.open && !checkingManually) setStatus(foundVersionMessage());
+    });
+  }
+
+  async function manualCheck() {
+    if (checkingManually) return;
+    if (!feed) return setStatus("本地文件可查看当前版本记录。在线版支持检查更新。");
+    if (!isOnline()) return setStatus("当前离线，联网后可以检查更新。");
+    checkingManually = true;
+    checkButton.disabled = true;
+    setStatus("正在检查更新…");
+    try {
+      const result = await launchCheck();
+      if (result === "new") setStatus(foundVersionMessage());
+      else if (result === "current") setStatus("当前已是最新版本。");
+      else setStatus("暂时无法检查更新，请稍后重试。");
+    } finally {
+      checkingManually = false;
+      checkButton.disabled = false;
+    }
+  }
+
+  button.addEventListener("click", () => {
+    if (!sheet.open) sheet.showModal();
+    markCurrentReleaseSeen();
+    if (!checkingManually) setStatus(hasNewVersion() ? foundVersionMessage() : "");
+  });
+  checkButton.addEventListener("click", () => { void manualCheck(); });
+  applyButton.addEventListener("click", () => {
+    if (!hasNewVersion()) return;
+    if (!isOnline()) return setStatus("当前离线，联网后可以刷新到新版本。");
+    location.reload();
+  });
+
+  window.addEventListener("storage", (event) => {
+    if (event.key !== seenKey) return;
+    seenVersion = Math.max(seenVersion, readSeenVersion());
+    syncControls();
+  });
+  window.addEventListener("offline", () => {
+    syncControls();
+    if (sheet.open && hasNewVersion() && !checkingManually) setStatus(foundVersionMessage());
+  });
+  window.addEventListener("online", () => { syncControls(); autoCheck(); });
+  window.addEventListener("focus", autoCheck);
+  window.addEventListener("pageshow", autoCheck);
+  document.addEventListener("visibilitychange", autoCheck);
+  syncControls();
+  autoCheck();
 })();
 
 </script>
