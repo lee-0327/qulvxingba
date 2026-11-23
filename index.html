@@ -1514,67 +1514,172 @@ button.expense-row:active {
 }
 
 .ai-page.ai-sheet {
-  --ai-inset: 20px;
+  --ai-inset: 14px;
+  --ai-panel-radius: 20px;
+  --ai-chat-paper: #f1f4ed;
+  --ai-strip: #f6f8f2;
   container: ai-dialog / size;
   display: flex;
-  width: min(700px, 100%);
-  height: clamp(370px, calc(100dvh - 164px), 680px);
+  width: min(760px, 100%);
+  height: clamp(390px, calc(100dvh - 164px), 860px);
   max-height: none;
   flex-direction: column;
   margin: 0 auto;
-  overflow: hidden;
-  box-shadow: var(--shadow-panel);
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.ai-page .sheet-head {
-  position: relative;
+.ai-titlebar {
+  display: flex;
   flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.ai-page .sheet-head > div {
+.ai-title-copy {
   min-width: 0;
 }
 
-.ai-page .sheet-head .hint {
-  display: -webkit-box;
+.ai-title-copy h2 {
+  font-size: clamp(21px, 3.5vw, 25px);
+  line-height: 1.25;
+}
+
+.ai-title-copy p {
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.ai-mode {
-  width: clamp(96px, 30%, 135px);
+.ai-title-actions {
+  display: flex;
   flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
 }
 
-.ai-connection {
+.ai-title-actions .button {
+  padding-inline: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ai-connection, .ai-options, .ai-history-note, .ai-messages, .ai-composer {
+  border-inline: 1px solid var(--line);
+}
+
+.ai-connection, .ai-options {
   display: block;
   flex: 0 1 auto;
-  min-height: var(--touch);
-  max-height: min(210px, 31%);
+  min-height: calc(var(--touch) + 1px);
+  max-height: min(250px, 38%);
   padding: 0 var(--ai-inset);
   overflow-y: auto;
   overscroll-behavior: contain;
   border-top: 0;
   border-bottom: 1px solid var(--line);
+  background: var(--ai-strip);
+}
+
+.ai-connection {
+  min-height: calc(var(--touch) + 2px);
+  border-top: 1px solid var(--line);
+  border-radius: var(--ai-panel-radius) var(--ai-panel-radius) 0 0;
   background: var(--surface);
 }
 
-.ai-connection summary {
+.ai-connection > summary, .ai-options > summary {
   position: sticky;
   z-index: 1;
   top: 0;
-  background: var(--surface);
-  font-size: 14px;
-  font-weight: 680;
+  align-content: center;
+  padding-block: 8px;
+  background: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
-.ai-connection[open] > :not(summary) {
+.ai-connection[open] > :not(summary), .ai-options[open] > :not(summary) {
   margin-bottom: 12px;
 }
 
-.ai-connection .form-grid {
-  align-items: end;
+.ai-options p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ai-mode {
+  max-width: 230px;
+}
+
+.ai-history-note {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 5px var(--ai-inset);
+  border-bottom: 1px solid var(--line);
+  background: var(--ai-strip);
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.ai-setup.form-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.ai-setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-setup-choice {
+  display: flex;
+  min-height: var(--touch);
+  align-items: flex-start;
+  gap: 8px;
+  padding-block: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.ai-setup-choice input {
+  margin-top: 2px;
+}
+
+.ai-setup-link {
+  font-size: 13px;
+}
+
+.ai-history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ai-history-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+button.ai-history-item {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) auto;
+  text-align: start;
+}
+
+.ai-history-item > .hint {
+  white-space: nowrap;
 }
 
 .ai-messages {
@@ -1583,10 +1688,56 @@ button.expense-row:active {
   min-height: 0;
   flex-direction: column;
   gap: 12px;
-  padding: 16px var(--ai-inset);
+  padding: 16px var(--ai-inset) 18px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--paper);
+  overflow-anchor: none;
+  background: var(--ai-chat-paper);
+}
+
+.ai-page:has(.ai-composer[hidden]) .ai-messages {
+  border-bottom: 1px solid var(--line);
+  border-radius: 0 0 var(--ai-panel-radius) var(--ai-panel-radius);
+}
+
+.ai-empty {
+  width: min(100%, 340px);
+  margin: clamp(10px, 4vw, 42px) auto 0;
+  padding-bottom: 8px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.ai-empty-art {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 8px;
+  object-fit: contain;
+}
+
+.ai-empty h3 {
+  margin-bottom: 8px;
+  font-size: 17px;
+}
+
+.ai-empty p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.ai-examples {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ai-examples .button {
+  padding-inline: 10px;
+  font-size: 12px;
 }
 
 .ai-message {
@@ -1631,19 +1782,15 @@ button.expense-row:active {
 .ai-composer {
   display: grid;
   flex: 0 1 auto;
-  min-height: 0;
-  gap: 8px;
+  min-height: calc(var(--touch) + 17px);
+  gap: 5px;
   margin: 0;
-  padding: 10px var(--ai-inset) 12px;
+  padding: 8px 10px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-top: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.ai-composer textarea {
-  min-height: 56px;
-  max-height: min(132px, 25dvh);
+  border-block: 1px solid var(--line);
+  border-radius: 0 0 var(--ai-panel-radius) var(--ai-panel-radius);
+  background: #fafbf7;
 }
 
 .ai-attachments {
@@ -1682,19 +1829,105 @@ button.expense-row:active {
 }
 
 .ai-composer-tools {
+  position: sticky;
+  z-index: 1;
+  bottom: 0;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  min-width: 0;
+  align-items: flex-end;
   gap: 6px;
+  background: inherit;
 }
 
-.ai-composer-tools :is(.primary, [type="submit"]) {
-  margin-inline-start: auto;
+.ai-input-label {
+  position: relative;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.ai-composer-tools .ai-input-label textarea {
+  height: var(--touch);
+  min-height: var(--touch);
+  max-height: 84px;
+  margin: 0;
+  padding: 8px 9px;
+  overflow-y: auto;
+  resize: none;
+}
+
+.ai-input-label textarea::placeholder {
+  font-size: 13px;
+}
+
+.ai-composer-tools > .button {
+  flex: 0 0 auto;
+  padding-inline: 8px;
+  white-space: nowrap;
+}
+
+.ai-composer-tools :is(#ai-speech, #ai-add-image) {
+  width: var(--touch);
+  height: var(--touch);
+  padding: 4px;
+}
+
+#ai-speech {
+  background: var(--accent-soft);
+}
+
+#ai-speech[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+#ai-add-image {
+  border-color: transparent;
+  background: transparent;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ai-mic-mark {
+  position: relative;
+  display: block;
+  width: 15px;
+  height: 18px;
+  background:
+    linear-gradient(currentColor, currentColor) center bottom / 8px 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) center bottom / 1.5px 5px no-repeat;
+}
+
+.ai-mic-mark::before, .ai-mic-mark::after {
+  position: absolute;
+  border: 1.5px solid currentColor;
+  content: "";
+}
+
+.ai-mic-mark::before {
+  inset: 0 4px auto;
+  height: 11px;
+  border-radius: 6px;
+}
+
+.ai-mic-mark::after {
+  inset: 5px 0 4px;
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+}
+
+.ai-composer-tools :is(#ai-send, #ai-cancel-send) {
+  min-width: 52px;
+  font-size: 13px;
+}
+
+.ai-composer-tools:has(#ai-cancel-send:not([hidden])) #ai-send:disabled {
+  display: none;
 }
 
 .ai-status, .ai-dictation {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
   overflow-wrap: anywhere;
 }
 
@@ -1703,41 +1936,40 @@ button.expense-row:active {
 }
 
 @container ai-dialog (max-height: 440px) {
-  .ai-sheet .sheet-head {
-    min-height: 52px;
-    padding-block: 4px;
+  .ai-titlebar {
+    margin-bottom: 4px;
+  }
+
+  .ai-title-copy h2 {
+    font-size: 19px;
   }
 
   .ai-messages {
     padding-block: 8px;
   }
 
-  .ai-connection {
-    max-height: 66px;
+  .ai-connection, .ai-options {
+    max-height: min(180px, 38%);
   }
 
-  .ai-connection[open] {
-    max-height: min(170px, 43%);
+  .ai-empty {
+    margin-top: 6px;
   }
 
-  .ai-composer {
-    gap: 4px;
-    padding-top: 6px;
-  }
-
-  .ai-composer label.field > span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .ai-composer label.field > textarea {
+  .ai-empty-art {
+    width: 48px;
     height: 48px;
-    min-height: 48px;
-    margin-top: 0;
+    margin-bottom: 6px;
+  }
+
+  .ai-empty h3 {
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+
+  .ai-examples {
+    gap: 5px;
+    margin-top: 8px;
   }
 
   .ai-attachments {
@@ -2239,7 +2471,7 @@ label.pill {
   }
 
   .ai-page.ai-sheet {
-    --ai-inset: 16px;
+    --ai-inset: 12px;
     height: auto;
     min-height: 318px;
     max-height: none;
@@ -2465,10 +2697,6 @@ label.pill {
     padding-inline: 16px;
   }
 
-  .ai-composer-tools > .button {
-    padding-inline: 10px;
-  }
-
   .sheet-notice {
     margin-inline: 16px;
   }
@@ -2679,48 +2907,58 @@ label.pill {
 
   <div id="ai-parking" hidden>
   <section class="sheet ai-sheet ai-page" id="ai-sheet" aria-labelledby="ai-heading">
-    <div class="sheet-head">
-      <div><h2 id="ai-heading">AI 记</h2><p class="hint" id="ai-trip-name"></p></div>
+    <header class="ai-titlebar">
+      <div class="ai-title-copy"><p class="hint">发一句话，或一张旅途截图</p><h2 id="ai-heading">AI 记</h2><p class="hint" id="ai-trip-name"></p></div>
+      <div class="ai-title-actions">
+        <button type="button" class="button quiet" id="ai-history-button">历史记录</button>
+        <button type="button" class="button quiet" id="ai-new-chat">新对话</button>
+      </div>
+    </header>
+    <details class="ai-connection" id="ai-connection">
+      <summary id="ai-connection-summary">配置自己的 AI 接口</summary>
+      <div id="ai-settings-host"></div>
+    </details>
+    <details class="ai-options">
+      <summary>识别与记入 · 更多</summary>
       <label class="ai-mode field">整理到<select id="ai-mode">
         <option value="auto">自动识别</option>
         <option value="itinerary">行程</option>
         <option value="restaurants">吃什么</option>
         <option value="ledger">记账</option>
       </select></label>
-    </div>
-    <details class="ai-connection" id="ai-connection">
-      <summary>AI 接口设置</summary>
-      <form id="ai-settings" class="form-grid">
-        <label class="field full">接口地址<input id="ai-base" type="url" maxlength="500" placeholder="https://…/v1" autocomplete="off" spellcheck="false" required></label>
-        <label class="field full">API 密钥<input id="ai-key" type="password" maxlength="2048" autocomplete="off" spellcheck="false"><span class="hint">仅在当前打开的页面使用</span></label>
-        <label class="field">模型<input id="ai-model" list="ai-models" maxlength="200" autocomplete="off" spellcheck="false" required><datalist id="ai-models"></datalist></label>
-        <button type="button" class="button quiet" id="ai-list-models">检测模型</button>
-        <button type="submit" class="button tonal">使用此接口</button>
-        <p class="hint full" id="ai-settings-status" role="status" hidden></p>
-      </form>
+      <p class="hint">识别结果会整理成草稿，核对后可记入当前旅行。</p>
     </details>
+    <p class="ai-history-note" id="ai-history-note">聊天文字和草稿保存在本机</p>
     <div class="ai-messages" id="ai-messages" role="log" aria-live="polite" aria-label="对话"></div>
     <form class="ai-composer" id="ai-composer">
       <div class="ai-attachments" id="ai-attachments" hidden></div>
-      <label class="field"><span>消息</span><textarea id="ai-text" rows="2" maxlength="4000" placeholder="输入想交给 AI 整理的内容"></textarea></label>
       <p class="ai-dictation hint" id="ai-dictation" role="status" hidden></p>
       <p class="ai-status hint" id="ai-status" role="status" hidden></p>
       <div class="ai-composer-tools">
+        <button type="button" class="button tonal" id="ai-speech" aria-label="语音输入" aria-pressed="false"><span class="ai-mic-mark" aria-hidden="true"></span></button>
+        <label class="field ai-input-label"><span class="visually-hidden">消息</span><textarea id="ai-text" rows="1" maxlength="4000" placeholder="输入消息…"></textarea></label>
         <input id="ai-images" type="file" accept="image/*" multiple hidden>
-        <button type="button" class="button tonal" id="ai-add-image">＋ 图片</button>
-        <button type="button" class="button tonal" id="ai-speech">语音</button>
-        <button type="button" class="button quiet" id="ai-cancel-send" hidden>取消等待</button>
+        <button type="button" class="button quiet" id="ai-add-image" aria-label="添加图片">＋</button>
+        <button type="button" class="button quiet" id="ai-cancel-send" aria-label="取消等待" hidden>取消</button>
         <button type="submit" class="button primary" id="ai-send">发送</button>
       </div>
     </form>
   </section>
   </div>
 
+  <dialog class="sheet ai-history" id="ai-history-sheet" aria-labelledby="ai-history-title">
+    <div class="sheet-head">
+      <h2 id="ai-history-title">历史记录</h2>
+      <button type="button" class="button icon-button quiet" data-close aria-label="关闭">×</button>
+    </div>
+    <div class="sheet-body ai-history-list" id="ai-history-list"></div>
+  </dialog>
+
   <input id="trip-restore-input" type="file" accept=".json,application/json" hidden>
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":3,"date":"2026-11-23","notes":["底部新增 AI 记。发送截图后，可以自动整理成行程、餐厅或支出草稿。","设置汇总账单导出、微信复制、JSON 备份与恢复、离线状态和接口说明。"]}</script>
+  <script type="application/json" id="app-release">{"version":4,"date":"2026-11-23","notes":["AI 接口新增服务商选择、获取模型列表、检测并保存和可选的回复测试。","AI 记改为轻记式对话，新增历史记录、新对话和一键填入示例。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -3986,8 +4224,9 @@ label.pill {
             <dl class="settings-help">
               <div><dt>接口地址</dt><dd>填写你信任的 HTTPS 地址，支持 Chat Completions 格式。</dd></div>
               <div><dt>模型</dt><dd>填写接口提供的模型名。要识别截图，请选支持图片的模型。</dd></div>
-              <div><dt>密钥</dt><dd>接口要求密钥时再填。密钥在当前页面使用，刷新后需要重新输入。</dd></div>
+              <div><dt>密钥</dt><dd>接口要求密钥时再填。默认仅在当前页面使用，也可以选择在本机加密记住。密钥独立于旅行备份。</dd></div>
               <div><dt>跨域权限</dt><dd>接口需要允许本网页发起跨域（CORS）请求。连接失败时，可在接口端检查来源和 Authorization 请求头是否放行。</dd></div>
+              <div><dt>连接检测</dt><dd>默认只查询模型列表。勾选回复测试才会发一条固定消息，可能产生少量 API 费用。</dd></div>
             </dl>
           </details>
         </section>
@@ -4117,6 +4356,7 @@ label.pill {
     rate: "接口提示额度不足或请求过于频繁，请到你的服务账户查看。",
     network: "暂时连不上接口。请检查网络，以及接口是否允许本网页跨域请求。",
     server: "所选接口未成功返回，请检查模型、图片支持或接口状态。",
+    model: "模型列表里没有这个模型。请重新选择，或核对后使用「仅保存，不检测」。",
     response: "返回内容无法整理成安全可用的草稿，请核对内容后手动填写。",
     timeout: "等待超时。没有自动重试，服务端仍可能已经处理这次请求。",
     cancelled: "已取消等待。已经发出的请求仍可能由服务商处理。"
@@ -4248,6 +4488,22 @@ label.pill {
     if (!Array.isArray(reply?.data)) throw error("response");
     return [...new Set(reply.data.map((model) => model?.id)
       .filter((id) => typeof id === "string" && modelIdPattern.test(id) && !secretIn(id, key)))].sort();
+  }
+
+  async function probe(config, {reply = false} = {}, signal) {
+    if (!credentials.has(config)) throw error("config");
+    const key = credentials.get(config);
+    if (!reply) {
+      const available = await models({baseUrl: config.baseUrl, apiKey: key}, signal);
+      if (!available.includes(config.model)) throw error("model");
+      return;
+    }
+    const body = JSON.stringify({model: config.model, messages: [{role: "user", content: "Please reply OK."}],
+      max_tokens: 64, stream: false});
+    const data = await fetchJSON({endpoint: config.endpoint, key, body, signal, timeoutMs: 25000, maxBytes: limits.replyBytes});
+    const message = data?.choices?.[0]?.message;
+    if (message?.refusal || message?.tool_calls?.length || typeof message?.content !== "string"
+      || !message.content.trim() || secretIn(message.content, key)) throw error("response");
   }
 
   function newDate(value) {
@@ -4404,7 +4660,690 @@ label.pill {
     return parseResult(reply, kinds, key, Boolean(text.trim() || recent.length));
   }
 
-  globalThis.TravelAIClient = Object.freeze({configure, models, request});
+  globalThis.TravelAIClient = Object.freeze({configure, models, probe, request});
+})();
+
+;
+(() => {
+  "use strict";
+
+  const settingsKey = "go-travel-ai-settings-v1";
+  const databaseName = "go-travel-ai-credentials-v1";
+  const credentialStore = "credentials";
+  const entry = "current";
+  const modelId = /^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,149}$/;
+  const keyPattern = /^[\x21-\x7e]{8,2048}$/;
+  const providers = [
+    ["openai", "OpenAI · 官方", "https://api.openai.com/v1", "https://developers.openai.com/api/reference/resources/models/methods/list", "官方密钥需保存在服务端。请填写你自己的兼容接口地址。"],
+    ["deepseek", "DeepSeek · 官方", "https://api.deepseek.com", "https://api-docs.deepseek.com/api/list-models/", "使用 DeepSeek 开放平台密钥。"],
+    ["dashscope", "阿里云百炼 · 北京", "https://dashscope.aliyuncs.com/compatible-mode/v1", "https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope", "使用北京地域密钥。也可自填业务空间的专属地址。"],
+    ["siliconflow", "硅基流动 · 中国站", "https://api.siliconflow.cn/v1", "https://docs.siliconflow.cn/docs/userguide/quickstart", "使用中国站密钥，请选择支持对话的模型。"],
+    ["moonshot", "Kimi · 月之暗面", "https://api.moonshot.cn/v1", "https://platform.kimi.com/docs/get-api-key", "使用 Kimi 开放平台密钥，请按模型能力选择文字或图片方式。"],
+    ["zhipu", "智谱 · GLM", "https://open.bigmodel.cn/api/paas/v4", "https://docs.bigmodel.cn/cn/guide/develop/openai/introduction", "使用开放平台密钥。通用 API 与编程套餐的地址和权限可能不同。"],
+    ["gemini", "Google · Gemini", "https://generativelanguage.googleapis.com/v1beta/openai", "https://ai.google.dev/gemini-api/docs/openai#list-models", "使用 Gemini API 密钥。此地址使用兼容接口。"],
+    ["groq", "Groq · 官方", "https://api.groq.com/openai/v1", "https://console.groq.com/docs/models", "使用 GroqCloud 密钥，请选择支持对话的模型。"]
+  ];
+  const domestic = new Set(["deepseek", "dashscope", "siliconflow", "moonshot", "zhipu"]);
+  const safeErrors = {
+    config: "请填写有效的 HTTPS 地址和模型名称。",
+    official: "OpenAI 官方密钥需要保存在服务端。请填写你自己的兼容接口地址。",
+    key: "请核对 API 密钥。地址、模型名称和发给 AI 的内容中都不要写入密钥。",
+    auth: "服务未允许访问。请检查密钥及其接口权限。",
+    rate: "服务提示额度不足或请求过于频繁，请到服务商处查看。",
+    network: "暂时连不上所选接口。请检查网络和服务商的跨域权限。",
+    server: "所选接口未返回结果。可以核对模型名后手动填入，或稍后再试。",
+    response: "服务返回的格式不符合预期。可以核对模型名后手动填入。",
+    "model-missing": "服务返回的列表里没有这个模型，请重新选择或确认后仅保存。",
+    timeout: "等待超时。已经发出的回复测试仍可能被服务商处理并计费。",
+    cancelled: "已取消等待。已经发出的回复测试仍可能被服务商处理并计费。",
+    storage: "浏览器未能更新本机设置，请检查存储权限后再试。",
+    vault: "本机密钥无法加密读写，请保留本次密钥或检查浏览器存储权限。"
+  };
+
+  function settingsError(code) {
+    const error = new Error(safeErrors[code]);
+    error.code = code;
+    return error;
+  }
+
+  function openVault() {
+    if (!globalThis.indexedDB) throw settingsError("vault");
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const request = indexedDB.open(databaseName, 1);
+      const timer = setTimeout(fail, 5000);
+      function fail() {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        reject(settingsError("vault"));
+      }
+      request.onupgradeneeded = () => request.result.createObjectStore(credentialStore);
+      request.onerror = fail;
+      request.onblocked = fail;
+      request.onsuccess = () => {
+        const db = request.result;
+        if (settled) { db.close(); return; }
+        settled = true;
+        clearTimeout(timer);
+        db.onversionchange = () => db.close();
+        resolve(db);
+      };
+    });
+  }
+
+  async function vault(mode, operation) {
+    const db = await openVault();
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(credentialStore, mode);
+        const request = operation(tx.objectStore(credentialStore));
+        const timer = setTimeout(() => {
+          try { tx.abort(); } catch { /* The transaction already ended. */ }
+          fail();
+        }, 5000);
+        function fail() {
+          clearTimeout(timer);
+          reject(settingsError("vault"));
+        }
+        tx.onerror = fail;
+        tx.onabort = fail;
+        tx.oncomplete = () => {
+          clearTimeout(timer);
+          resolve(request.result);
+        };
+      });
+    } catch {
+      throw settingsError("vault");
+    } finally {
+      db.close();
+    }
+  }
+
+  function vaultBinding(baseUrl, iv) {
+    return {name: "AES-GCM", iv, additionalData: new TextEncoder().encode(`${databaseName}\n${baseUrl}`)};
+  }
+
+  async function rememberCredential(baseUrl, key) {
+    if (!globalThis.isSecureContext || !globalThis.crypto?.subtle || !keyPattern.test(key)) throw settingsError("vault");
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const bytes = new TextEncoder().encode(key);
+    try {
+      const cryptoKey = await crypto.subtle.generateKey({name: "AES-GCM", length: 256}, false, ["encrypt", "decrypt"]);
+      const ciphertext = await crypto.subtle.encrypt(vaultBinding(baseUrl, iv), cryptoKey, bytes);
+      await vault("readwrite", (store) => store.put({baseUrl, cryptoKey, iv, ciphertext}, entry));
+    } catch {
+      throw settingsError("vault");
+    } finally {
+      bytes.fill(0);
+    }
+  }
+
+  async function restoreCredential(baseUrl) {
+    if (!globalThis.isSecureContext || !globalThis.crypto?.subtle) throw settingsError("vault");
+    const data = await vault("readonly", (store) => store.get(entry));
+    if (!data || data.baseUrl !== baseUrl) return "";
+    if (!(data.iv instanceof Uint8Array) || data.iv.byteLength !== 12 || !(data.ciphertext instanceof ArrayBuffer)
+      || data.ciphertext.byteLength < 24 || data.ciphertext.byteLength > 2064
+      || data.cryptoKey?.extractable !== false || data.cryptoKey.algorithm?.name !== "AES-GCM"
+      || data.cryptoKey.algorithm?.length !== 256) throw settingsError("vault");
+    let bytes;
+    try {
+      bytes = new Uint8Array(await crypto.subtle.decrypt(vaultBinding(baseUrl, data.iv), data.cryptoKey, data.ciphertext));
+      const key = new TextDecoder("utf-8", {fatal: true}).decode(bytes);
+      if (!keyPattern.test(key)) throw settingsError("vault");
+      return key;
+    } catch {
+      throw settingsError("vault");
+    } finally {
+      bytes?.fill(0);
+    }
+  }
+
+  function forgetCredential() {
+    return vault("readwrite", (store) => store.delete(entry));
+  }
+
+  function mount(host, {client, onApply, onInvalidate}) {
+    if (!host) return {cancel() {}};
+    host.innerHTML = `<form id="ai-settings" class="ai-setup form-grid">
+      <label class="field full">服务商<select id="ai-provider"><option value="">选择服务商，或填写自己的地址</option></select></label>
+      <p id="ai-provider-note" class="hint full" hidden></p>
+      <a id="ai-provider-docs" class="ai-setup-link full" target="_blank" rel="noopener noreferrer" hidden>服务商文档</a>
+      <label class="field full">接口地址<input id="ai-base" type="url" maxlength="1800" placeholder="https://你的接口地址/v1" autocomplete="off" spellcheck="false" required></label>
+      <label class="field full">API 密钥 <span class="optional">按需填写</span><input id="ai-key" type="password" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="填你自己的 API 密钥"></label>
+      <p id="ai-key-state" class="hint full" role="status"></p>
+      <div class="ai-setup-actions full"><button id="ai-list-models" class="button tonal" type="button">获取模型列表</button><button id="ai-cancel-detect" class="button quiet" type="button" hidden>取消等待</button></div>
+      <p id="ai-models-status" class="hint full" role="status" hidden></p>
+      <label id="ai-model-select-row" class="field full" hidden>从结果选择模型<select id="ai-model-select"></select></label>
+      <label class="field">模型名称<input id="ai-model" maxlength="150" placeholder="也可以手动填模型 ID" autocomplete="off" spellcheck="false" required></label>
+      <label class="field">使用方式<select id="ai-input-mode"><option value="image">文字与图片</option><option value="text">只用文字</option></select></label>
+      <label class="ai-setup-choice full"><input id="ai-remember-config" type="checkbox" checked>在这台设备上记住地址和模型</label>
+      <label class="ai-setup-choice full"><input id="ai-remember-key" type="checkbox">在这台设备上加密记住密钥</label>
+      <p class="hint full">记住密钥仅适合自己的设备。当前网站代码仍可读取保存的密钥。</p>
+      <label class="ai-setup-choice full"><input id="ai-test-reply" type="checkbox">检测时测试一次 AI 回复，可能产生费用</label>
+      <p id="ai-detection-target" class="hint full"></p>
+      <div class="ai-setup-actions full"><button id="ai-test-save" class="button primary" type="submit">检测并保存</button><button id="ai-save-only" class="button tonal" type="button">仅保存，不检测</button></div>
+      <p id="ai-settings-status" class="hint full" role="status" hidden></p>
+      <div class="ai-setup-actions ai-setup-manage full"><button id="ai-forget-key" class="button quiet" type="button">忘记密钥</button><button id="ai-reset-config" class="button quiet" type="button">清除接口配置</button></div>
+      <p class="hint full">接口需允许浏览器跨域访问。获取列表只查询模型，图片能力请以服务商说明为准。</p>
+    </form>`;
+
+    const get = (id) => host.querySelector(`#${id}`);
+    const form = get("ai-settings");
+    const provider = get("ai-provider");
+    const base = get("ai-base");
+    const keyInput = get("ai-key");
+    const modelInput = get("ai-model");
+    const modelSelect = get("ai-model-select");
+    const inputMode = get("ai-input-mode");
+    const rememberConfig = get("ai-remember-config");
+    const rememberKey = get("ai-remember-key");
+    const testReply = get("ai-test-reply");
+    let active;
+    let revision = 0;
+    let writing = false;
+    let restoring = false;
+    let storedCredential = false;
+    let savedBase = "";
+    let liveKey = "";
+
+    for (const [label, isDomestic] of [["国内服务", true], ["国际服务", false]]) {
+      const group = document.createElement("optgroup");
+      group.label = label;
+      for (const [id, name] of providers.filter(([id]) => domestic.has(id) === isDomestic)) {
+        group.append(new Option(name, id));
+      }
+      provider.append(group);
+    }
+    provider.append(new Option("自定义兼容接口", "custom"));
+
+    function status(id, message = "", isError = false) {
+      const element = get(id);
+      element.textContent = message;
+      element.hidden = !message;
+      element.dataset.kind = isError ? "error" : "";
+    }
+
+    function explainProvider() {
+      const selected = providers.find(([id]) => id === provider.value);
+      const link = get("ai-provider-docs");
+      status("ai-provider-note", selected?.[4]);
+      link.hidden = !selected;
+      if (selected) link.href = selected[3];
+      else link.removeAttribute("href");
+    }
+
+    function renderModelList(models = []) {
+      modelSelect.replaceChildren(new Option("选择一个模型", ""), ...models.map((id) => new Option(id, id)));
+      if (models.includes(modelInput.value)) modelSelect.value = modelInput.value;
+      get("ai-model-select-row").hidden = models.length === 0;
+    }
+
+    function sync() {
+      for (const control of form.querySelectorAll("input, select")) control.disabled = writing;
+      rememberKey.disabled = writing || !rememberConfig.checked;
+      for (const id of ["ai-list-models", "ai-test-save", "ai-save-only"]) get(id).disabled = Boolean(active || writing || restoring);
+      const cancelButton = get("ai-cancel-detect");
+      cancelButton.hidden = !active;
+      get("ai-forget-key").disabled = writing || !(storedCredential || liveKey || keyInput.value);
+      get("ai-reset-config").disabled = writing || !(savedBase || base.value || modelInput.value || liveKey || storedCredential);
+      status("ai-key-state", liveKey ? (storedCredential ? "已从这台设备准备好密钥。" : "本次页面的密钥已就绪。") : "接口需要密钥时，请在这里填写。");
+      status("ai-detection-target", testReply.checked
+        ? "检测将向所选接口发送一次简短的固定文字。"
+        : "默认检测查询模型列表，不发送账单或图片。");
+    }
+
+    function stop(announce = false) {
+      const operation = active;
+      active = null;
+      operation?.controller.abort();
+      if (operation && announce) {
+        status(operation.type === "models" ? "ai-models-status" : "ai-settings-status", safeErrors.cancelled);
+      }
+      sync();
+    }
+
+    function edit({target = false, clearModels = false, invalidate = true} = {}) {
+      revision++;
+      restoring = false;
+      stop();
+      if (target) {
+        keyInput.value = "";
+        liveKey = "";
+        rememberKey.checked = false;
+      }
+      if (clearModels) {
+        renderModelList();
+        status("ai-models-status");
+      }
+      testReply.checked = false;
+      if (invalidate) onInvalidate();
+      status("ai-settings-status", "设置已修改，保存后生效。");
+      sync();
+    }
+
+    function messageFor(error, fallback) {
+      return Object.hasOwn(safeErrors, error?.code) ? safeErrors[error.code] : fallback;
+    }
+
+    function candidate(requireModel = true) {
+      const seed = {baseUrl: base.value, model: requireModel ? modelInput.value : "model-list"};
+      const checked = client.configure(seed);
+      const typed = keyInput.value.trim();
+      const key = typed || (checked.baseUrl === savedBase ? liveKey : "");
+      const config = client.configure({...seed, apiKey: key});
+      const mode = inputMode.value === "text" ? "text" : "image";
+      return {config, key, mode};
+    }
+
+    function begin(type) {
+      active = {type, controller: new AbortController()};
+      sync();
+      return active;
+    }
+
+    function end(operation) {
+      if (active === operation) active = null;
+      sync();
+    }
+
+    async function discover() {
+      if (active || writing || restoring) return;
+      let operation;
+      try {
+        const {config, key} = candidate(false);
+        operation = begin("models");
+        status("ai-models-status", "正在获取模型列表…");
+        const ids = await client.models({baseUrl: config.baseUrl, apiKey: key}, operation.controller.signal);
+        if (active !== operation) return;
+        const models = [...new Set(ids.filter((id) => typeof id === "string" && modelId.test(id) && (!key || !id.includes(key))))].slice(0, 1000);
+        renderModelList(models);
+        status("ai-models-status", models.length
+          ? `返回 ${models.length} 个模型，可从结果选择或手动填写。`
+          : "服务没有返回可选模型，可以手动填写模型名。");
+      } catch (error) {
+        if (!operation || active === operation) {
+          status("ai-models-status", messageFor(error, "未能获取模型，请检查地址和密钥。"), true);
+        }
+      } finally {
+        end(operation);
+      }
+    }
+
+    async function persist(config, key, mode, keepConfig, keepKey) {
+      if (keepKey && !key) throw settingsError("key");
+      const next = keepConfig ? JSON.stringify({baseUrl: config.baseUrl, model: config.model, mode, rememberKey: keepKey}) : null;
+      let previous;
+      try {
+        previous = localStorage.getItem(settingsKey);
+        if (next !== null) localStorage.setItem(settingsKey, next);
+        else if (previous !== null) localStorage.removeItem(settingsKey);
+      } catch {
+        throw settingsError("storage");
+      }
+      try {
+        if (keepKey) await rememberCredential(config.baseUrl, key);
+        else if (storedCredential) await forgetCredential();
+        storedCredential = keepKey;
+      } catch {
+        try {
+          if (localStorage.getItem(settingsKey) === next) {
+            if (previous === null) localStorage.removeItem(settingsKey);
+            else localStorage.setItem(settingsKey, previous);
+          }
+        } catch { /* Keep the key out of plaintext even if preference storage fails. */ }
+        throw settingsError("vault");
+      }
+    }
+
+    async function save(detect) {
+      if (active || writing || restoring) return;
+      let operation;
+      let ownsWrite = false;
+      try {
+        const {config, key, mode} = candidate();
+        const remember = rememberConfig.checked;
+        const rememberSecret = remember && rememberKey.checked;
+        const reply = detect && testReply.checked;
+        if (rememberSecret && !key) throw settingsError("key");
+        if (detect) {
+          operation = begin("probe");
+          status("ai-settings-status", reply ? "正在测试一次 AI 回复…" : "正在检查接口和所选模型…");
+          await client.probe(config, {reply}, operation.controller.signal);
+          if (active !== operation) return;
+        }
+        active = null;
+        writing = true;
+        ownsWrite = true;
+        sync();
+        await persist(config, key, mode, remember, rememberSecret);
+        savedBase = config.baseUrl;
+        liveKey = key;
+        keyInput.value = "";
+        testReply.checked = false;
+        const message = reply ? "文字回复测试通过；识图请按服务商说明核对。"
+          : detect ? "接口和模型列表检查通过。" : "已保存本次填写的设置。";
+        status("ai-settings-status", message);
+        onApply(config, {mode, feedback: message});
+      } catch (error) {
+        if (!operation || active === operation || ownsWrite) {
+          status("ai-settings-status", messageFor(error, "未能应用设置，请核对后再试。"), true);
+        }
+      } finally {
+        if (ownsWrite) writing = false;
+        end(operation);
+      }
+    }
+
+    async function clear(reset) {
+      if (writing) return;
+      edit({target: true, clearModels: true});
+      writing = true;
+      sync();
+      try {
+        if (storedCredential) await forgetCredential();
+        storedCredential = false;
+        const previous = JSON.parse(localStorage.getItem(settingsKey) || "null");
+        if (reset) localStorage.removeItem(settingsKey);
+        else if (previous?.baseUrl && previous?.model) {
+          localStorage.setItem(settingsKey, JSON.stringify({
+            baseUrl: previous.baseUrl, model: previous.model,
+            mode: previous.mode === "text" ? "text" : "image", rememberKey: false
+          }));
+        }
+        if (reset) {
+          form.reset();
+          provider.value = "";
+          savedBase = "";
+          explainProvider();
+        }
+        status("ai-settings-status", reset ? "已清除这台设备上的接口设置。" : "已清除密钥。需要时可重新填写。");
+      } catch (error) {
+        status("ai-settings-status", messageFor(error, "暂时无法清除本机设置，请重试。"), true);
+      } finally {
+        writing = false;
+        sync();
+      }
+    }
+
+    async function restore() {
+      let saved;
+      try { saved = JSON.parse(localStorage.getItem(settingsKey) || "null"); }
+      catch { return; }
+      if (!saved) return;
+      let config;
+      try { config = client.configure({baseUrl: saved.baseUrl, model: saved.model}); }
+      catch { return; }
+      const mode = saved.mode === "text" ? "text" : "image";
+      base.value = config.baseUrl;
+      modelInput.value = config.model;
+      inputMode.value = mode;
+      provider.value = providers.find(([, , url]) => url === config.baseUrl)?.[0] ?? "custom";
+      savedBase = config.baseUrl;
+      storedCredential = saved.rememberKey === true;
+      rememberKey.checked = storedCredential;
+      explainProvider();
+      if (!storedCredential) {
+        onApply(config, {mode, restored: true});
+        status("ai-settings-status", "地址和模型已从本机恢复。");
+        sync();
+        return;
+      }
+      const run = revision;
+      restoring = true;
+      sync();
+      status("ai-settings-status", "正在恢复本机密钥…");
+      try {
+        const restored = await restoreCredential(config.baseUrl);
+        if (run !== revision) return;
+        if (restored) {
+          const withKey = client.configure({baseUrl: config.baseUrl, model: config.model, apiKey: restored});
+          liveKey = restored;
+          onApply(withKey, {mode, restored: true});
+          status("ai-settings-status", "地址、模型和密钥已从本机恢复。");
+        } else {
+          rememberKey.checked = false;
+          onApply(config, {mode, restored: true});
+          status("ai-settings-status", "地址和模型已恢复。请重新填写密钥。");
+        }
+      } catch {
+        if (run === revision) {
+          rememberKey.checked = false;
+          onApply(config, {mode, restored: true});
+          status("ai-settings-status", "无法恢复本机密钥，请重新填写或清除旧密钥。", true);
+        }
+      } finally {
+        if (run === revision) restoring = false;
+        sync();
+      }
+    }
+
+    provider.addEventListener("change", () => {
+      const selected = providers.find(([id]) => id === provider.value);
+      if (selected) base.value = selected[2];
+      else if (provider.value !== "custom") base.value = "";
+      modelInput.value = "";
+      edit({target: true, clearModels: true});
+      explainProvider();
+    });
+    base.addEventListener("input", () => {
+      provider.value = "custom";
+      edit({target: true, clearModels: true});
+      explainProvider();
+    });
+    keyInput.addEventListener("input", () => edit({clearModels: true}));
+    modelInput.addEventListener("input", () => {
+      modelSelect.value = modelInput.value;
+      edit();
+    });
+    modelSelect.addEventListener("change", () => {
+      if (!modelSelect.value) return;
+      modelInput.value = modelSelect.value;
+      edit();
+    });
+    inputMode.addEventListener("change", () => edit());
+    rememberConfig.addEventListener("change", () => {
+      if (!rememberConfig.checked) rememberKey.checked = false;
+      edit({invalidate: false});
+    });
+    rememberKey.addEventListener("change", () => edit({invalidate: false}));
+    testReply.addEventListener("change", () => stop());
+    form.addEventListener("submit", (event) => { event.preventDefault(); void save(true); });
+    get("ai-list-models").addEventListener("click", () => void discover());
+    get("ai-save-only").addEventListener("click", () => void save(false));
+    get("ai-cancel-detect").addEventListener("click", () => stop(true));
+    get("ai-forget-key").addEventListener("click", () => void clear(false));
+    get("ai-reset-config").addEventListener("click", () => void clear(true));
+
+    const details = host.closest("details");
+    details?.addEventListener("toggle", () => { if (!details.open) stop(true); });
+    host.closest("dialog")?.addEventListener("close", () => stop(true));
+    window.addEventListener("pagehide", () => stop());
+    renderModelList();
+    sync();
+    void restore();
+    return {cancel: () => stop(true)};
+  }
+
+  globalThis.TravelAISettings = Object.freeze({mount});
+})();
+
+;
+(() => {
+  "use strict";
+
+  const key = "qingji-trip-ai-history-v1";
+  const maxSerializedChars = 420_000;
+  const maxConversations = 96;
+  const maxConversationsPerTrip = 12;
+  const maxMessages = 12;
+  const maxActions = 12;
+  const maxCents = 99_999_999_999;
+  const privateTokens = /\b(?:sk-[A-Za-z0-9_-]{12,}|Bearer\s+[A-Za-z0-9._~-]{12,}|(?:api[_-]?key|access[_-]?token|password)\s*[:=]\s*["']?[A-Za-z0-9._~+/=-]{8,})/gi;
+  const mediaData = /data:(?:image|audio|video)\/[^,\s]*,[^\s]*/gi;
+  const credentialParam = /^(?:api[_-]?key|access[_-]?token|password|authorization)$/i;
+  const fields = {
+    itinerary: {title: 70, date: 10, time: 5, category: 10, place: 40, notes: 400},
+    restaurant: {name: 48, city: 24, address: 120, dishes: 160, notes: 400, link: 1000},
+    expense: {title: 70, date: 10, category: 10, place: 24}
+  };
+  const itineraryKinds = ["交通", "住宿", "游玩", "用餐", "其他"];
+  const expenseCategories = ["餐饮", "住宿", "交通", "门票", "购物", "日用", "其他"];
+
+  function isRecord(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function validId(value) {
+    return typeof value === "string" && value.length <= 256 && Boolean(value.trim())
+      && !/[\u0000-\u001f\u007f]/.test(value);
+  }
+
+  function timestamp(value) {
+    const ms = typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value) ? Date.parse(value) : value;
+    return Number.isSafeInteger(ms) && ms >= 0 && ms <= 8.64e15 ? ms : null;
+  }
+
+  function text(value, limit) {
+    return typeof value === "string" ? value.slice(0, limit)
+      .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, " ")
+      .replace(privateTokens, "[已隐藏]").replace(mediaData, "[媒体已省略]") : "";
+  }
+
+  function date(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith("0000-")) return "";
+    const calendar = new Date(`${value}T00:00:00Z`);
+    return Number.isFinite(calendar.getTime()) && calendar.toISOString().slice(0, 10) === value ? value : "";
+  }
+
+  function link(value) {
+    if (value.includes("[已隐藏]")) return "";
+    try {
+      const url = new URL(value);
+      const parameters = [...url.searchParams.keys(), ...new URLSearchParams(url.hash.slice(1)).keys()];
+      return (url.protocol === "https:" || url.protocol === "http:") && !url.username && !url.password
+        && url.href.length <= fields.restaurant.link && !parameters.some((name) => credentialParam.test(name)) ? url.href : "";
+    } catch {
+      return "";
+    }
+  }
+
+  function normalizeAction(action) {
+    if (!isRecord(action) || !Object.hasOwn(fields, action.kind)) return null;
+    const {kind} = action;
+    const result = {kind};
+    for (const [name, limit] of Object.entries(fields[kind])) result[name] = text(action[name], limit);
+    if (kind === "restaurant") {
+      result.link = link(result.link);
+    } else {
+      result.date = date(result.date);
+    }
+    if (kind === "itinerary") {
+      result.time = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(result.time) ? result.time : "";
+      result.category = result.category === "餐饮" ? "用餐" : itineraryKinds.includes(result.category) ? result.category : "";
+    }
+    if (kind === "expense") {
+      const amount = action.amountCents;
+      result.amountCents = Number.isSafeInteger(amount) && amount > 0 && amount <= maxCents ? amount : null;
+      result.category = expenseCategories.includes(result.category) ? result.category : "其他";
+    }
+    return result;
+  }
+
+  function normalizeMessage(entry) {
+    if (!isRecord(entry) || entry.sent === false || entry.pending === true || entry.unsent === true) return null;
+    const {role} = entry;
+    if (role != null && role !== "user" && role !== "assistant") return null;
+    if (entry.user != null && (typeof entry.user !== "boolean" || (role && entry.user !== (role === "user")))) return null;
+    const user = role === "user" || entry.user === true;
+    const message = {user, text: text(entry.text, user ? 4000 : 600)};
+    if (role) message.role = role;
+
+    if (user) {
+      const count = Number.isInteger(entry.imageCount) ? entry.imageCount : (Array.isArray(entry.images) ? entry.images.length : undefined);
+      if (count >= 0 && count <= 4) message.imageCount = count;
+      return message.text.trim() || message.imageCount ? message : null;
+    }
+
+    const actions = Array.isArray(entry.actions) ? entry.actions.slice(0, maxActions) : [];
+    const saved = new Set(Array.isArray(entry.savedIndices) ? entry.savedIndices.slice(0, maxActions) : []);
+    message.actions = [];
+    message.savedIndices = [];
+    for (const [index, action] of actions.entries()) {
+      const draft = normalizeAction(action);
+      if (!draft) continue;
+      if (saved.has(index)) message.savedIndices.push(message.actions.length);
+      message.actions.push(draft);
+    }
+    return message.text.trim() || message.actions.length ? message : null;
+  }
+
+  function normalizeConversation(tripId, value) {
+    if (!validId(tripId) || !isRecord(value) || !validId(value.id) || !Array.isArray(value.history)) return null;
+    const updatedAt = timestamp(value.updatedAt);
+    if (updatedAt === null) return null;
+    const history = value.history.slice(-maxMessages).map(normalizeMessage).filter(Boolean);
+    return history.length ? {tripId, id: value.id, updatedAt, history} : null;
+  }
+
+  function bounded(items) {
+    const counts = new Map();
+    const idsByTrip = new Map();
+    const result = [];
+    let chars = JSON.stringify({version: 1, items: []}).length;
+    for (const item of items.sort((a, b) => b.updatedAt - a.updatedAt)) {
+      const count = counts.get(item.tripId) || 0;
+      const ids = idsByTrip.get(item.tripId) || new Set();
+      if (count >= maxConversationsPerTrip || ids.has(item.id)) continue;
+      const nextChars = chars + JSON.stringify(item).length + (result.length ? 1 : 0);
+      if (result.length === maxConversations || nextChars > maxSerializedChars) break;
+      result.push(item);
+      chars = nextChars;
+      counts.set(item.tripId, count + 1);
+      ids.add(item.id);
+      idsByTrip.set(item.tripId, ids);
+    }
+    return result;
+  }
+
+  function load() {
+    const stored = localStorage.getItem(key);
+    if (!stored || stored.length > maxSerializedChars) return [];
+    let data;
+    try { data = JSON.parse(stored); } catch { return []; }
+    if (data?.version !== 1 || !Array.isArray(data.items)) return [];
+    return bounded(data.items.map((item) => normalizeConversation(item?.tripId, item)).filter(Boolean));
+  }
+
+  function list(tripId) {
+    if (!validId(tripId)) return [];
+    try {
+      return load().filter((item) => item.tripId === tripId)
+        .map(({id, updatedAt, history}) => ({id, updatedAt, history}));
+    } catch {
+      return [];
+    }
+  }
+
+  function save(tripId, value) {
+    try {
+      const conversation = normalizeConversation(tripId, value);
+      if (!conversation) return false;
+      const stored = load();
+      const matches = (item) => item.tripId === tripId && item.id === conversation.id;
+      const previous = stored.find(matches);
+      if (previous && previous.updatedAt > conversation.updatedAt) return true;
+      const items = bounded([conversation, ...stored.filter((item) => !matches(item))]);
+      if (!items.includes(conversation)) return false;
+      localStorage.setItem(key, JSON.stringify({version: 1, items}));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  globalThis.TravelAIHistory = Object.freeze({list, save});
 })();
 
 ;
@@ -4418,6 +5357,9 @@ label.pill {
   const attachments = get("ai-attachments");
   const settings = get("ai-connection");
   const client = globalThis.TravelAIClient;
+  const historyStore = globalThis.TravelAIHistory;
+  const historySheet = get("ai-history-sheet");
+  const emptyArt = "data:image/webp;base64,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";
   const modeByKind = { itinerary: "itinerary", restaurant: "restaurants", expense: "ledger" };
   const descriptions = {
     auto: ["发来车票、餐厅或付款截图，我会区分要记入行程、餐厅还是账单。"],
@@ -4431,10 +5373,10 @@ label.pill {
   let active;
   let host;
   let config;
+  let inputMode = "image";
   let approvedConfig;
   let connectionGeneration = 0;
   let request;
-  let modelRequest;
   let recognition;
   let preparing = false;
 
@@ -4470,6 +5412,7 @@ label.pill {
     node.className = entry.user ? "ai-message ai-message-user" : "ai-message";
     if (entry.text) addText(node, "", entry.text);
     for (const source of entry.images || []) image(node, source, "已发送的图片");
+    if (entry.user && entry.imageCount && !entry.images?.length) addText(node, "hint", `已发送 ${entry.imageCount} 张图片`);
     if (entry.actions?.length) {
       const list = document.createElement("div");
       list.className = "ai-drafts";
@@ -4490,6 +5433,7 @@ label.pill {
             stopSpeech();
             conversation.review(action, () => {
               conversation.saved.add(action);
+              persist(conversation);
               if (host && active === conversation) renderConversation();
             });
           });
@@ -4504,11 +5448,32 @@ label.pill {
   function renderConversation() {
     messages.replaceChildren();
     if (!active.history.length) {
-      displayMessage({ text: active.trip ? descriptions[active.mode][0] : "先新建或恢复一趟旅行，再把截图整理进对应的账本。" });
+      const empty = document.createElement("div");
+      empty.className = "ai-empty";
+      image(empty, emptyArt, "");
+      empty.firstElementChild.className = "ai-empty-art";
+      addText(empty, "", active.trip ? "发来旅途截图，我来整理" : "先选一趟旅行", "h3");
+      addText(empty, "", active.trip ? descriptions[active.mode][0] : "先新建或恢复一趟旅行，再把截图整理进对应的账本。");
+      if (active.trip) {
+        const examples = document.createElement("div");
+        examples.className = "ai-examples";
+        for (const example of ["明早 9 点去古城", "收藏这家米线店", "今天打车 36 元"]) {
+          const button = addText(examples, "button tonal", example, "button");
+          button.type = "button";
+          button.addEventListener("click", () => {
+            if (text.readOnly) return;
+            text.value = active.text = example;
+            text.focus();
+            sync();
+          });
+        }
+        empty.append(examples);
+      }
+      messages.append(empty);
     } else {
       for (const entry of active.history) displayMessage(entry);
     }
-    messages.scrollTop = messages.scrollHeight;
+    messages.scrollTop = active.history.length ? messages.scrollHeight : 0;
   }
 
   function renderAttachments() {
@@ -4534,7 +5499,8 @@ label.pill {
   function sync() {
     const busy = Boolean(request) || preparing;
     get("ai-send").disabled = busy || (!text.value.trim() && !active?.images.length);
-    get("ai-add-image").disabled = busy || active?.images.length >= maxImages;
+    get("ai-add-image").disabled = busy || inputMode === "text" || active?.images.length >= maxImages;
+    get("ai-add-image").title = inputMode === "text" ? "在接口设置切换到文字和图片" : "";
     get("ai-speech").disabled = busy;
     text.readOnly = busy;
     get("ai-cancel-send").hidden = !request;
@@ -4546,7 +5512,7 @@ label.pill {
     recognition = undefined;
     listening?.abort();
     const voice = get("ai-speech");
-    voice.textContent = "语音";
+    voice.setAttribute("aria-label", "语音输入");
     voice.setAttribute("aria-pressed", "false");
   }
 
@@ -4584,12 +5550,12 @@ label.pill {
     listening.onend = () => {
       if (recognition !== listening) return;
       recognition = undefined;
-      get("ai-speech").textContent = "语音";
+      get("ai-speech").setAttribute("aria-label", "语音输入");
       get("ai-speech").setAttribute("aria-pressed", "false");
     };
     try {
       listening.start();
-      get("ai-speech").textContent = "停止听写";
+      get("ai-speech").setAttribute("aria-label", "停止听写");
       get("ai-speech").setAttribute("aria-pressed", "true");
       status("ai-dictation", "正在听写，结束后请核对文字。");
     } catch {
@@ -4625,7 +5591,7 @@ label.pill {
     const files = [...target.files];
     target.value = "";
     const conversation = active;
-    if (!files.length || preparing || !conversation) return;
+    if (!files.length || preparing || inputMode === "text" || !conversation) return;
     if (conversation.images.length + files.length > maxImages) {
       return status("ai-status", `每次最多发送 ${maxImages} 张图片，可以分批发送。`);
     }
@@ -4648,51 +5614,33 @@ label.pill {
     }
   });
 
-  function values() {
-    return { baseUrl: get("ai-base").value.trim(), model: get("ai-model").value.trim(), apiKey: get("ai-key").value.trim() };
-  }
-
-  get("ai-settings").addEventListener("submit", (event) => {
-    event.preventDefault();
-    try {
-      const next = client.configure(values());
+  const connection = globalThis.TravelAISettings.mount(get("ai-settings-host"), {client,
+    onApply(next, {mode, restored = false, feedback}) {
       request?.abort();
       config = next;
+      inputMode = mode;
       connectionGeneration += 1;
       approvedConfig = undefined;
-      settings.open = false;
-      status("ai-settings-status");
-      status("ai-status", "接口已选定。发送前可预览文字和图片。");
-    } catch (error) {
-      status("ai-settings-status", error.message);
+      get("ai-connection-summary").textContent = "AI 接口 · 已配置";
+      if (host && !restored) {
+        settings.open = false;
+        status("ai-status", feedback ? `接口已选定。${feedback}` : "接口已选定，可以发送消息。");
+      }
+      sync();
+    },
+    onInvalidate() {
+      request?.abort();
+      connectionGeneration += 1;
+      config = undefined;
+      inputMode = "image";
+      approvedConfig = undefined;
+      get("ai-connection-summary").textContent = "配置自己的 AI 接口";
+      sync();
     }
   });
 
-  get("ai-list-models").addEventListener("click", async () => {
-    if (modelRequest) return;
-    modelRequest = new AbortController();
-    const running = modelRequest;
-    const selected = values();
-    const button = get("ai-list-models");
-    button.disabled = true;
-    status("ai-settings-status", "正在检测模型…");
-    try {
-      const models = await client.models(selected, running.signal);
-      const current = values();
-      if (running.signal.aborted || current.baseUrl !== selected.baseUrl || current.apiKey !== selected.apiKey) return;
-      get("ai-models").replaceChildren(...models.map((model) => {
-        const option = document.createElement("option");
-        option.value = model;
-        return option;
-      }));
-      if (models.length === 1) get("ai-model").value = models[0];
-      status("ai-settings-status", models.length ? "检测到可选模型，请选择支持图片的模型。" : "没有检测到模型，可以手动填写模型名。");
-    } catch (error) {
-      if (!running.signal.aborted) status("ai-settings-status", error.message);
-    } finally {
-      if (modelRequest === running) modelRequest = undefined;
-      button.disabled = false;
-    }
+  settings.addEventListener("toggle", () => {
+    if (!settings.open) connection.cancel();
   });
 
   get("ai-cancel-send").addEventListener("click", () => request?.abort());
@@ -4706,6 +5654,9 @@ label.pill {
       settings.open = true;
       get("ai-base").focus();
       return status("ai-settings-status", "请先填写你要使用的 AI 接口和模型。");
+    }
+    if (inputMode === "text" && active.images.length) {
+      return status("ai-status", "当前选择仅文字。请移除图片，或在接口设置切换到文字和图片。");
     }
     if (approvedConfig !== config) {
       if (!confirm(`将本次文字、已预览的图片和同窗口最近的待核对内容发送到 ${new URL(config.endpoint).hostname}，接口可能按量计费。发送吗？`)) return;
@@ -4730,8 +5681,10 @@ label.pill {
         dates: { today: conversation.today, startDate: conversation.trip.startDate, endDate: conversation.trip.endDate }
       }, running.signal);
       if (running.signal.aborted || active !== conversation || !host) return;
-      conversation.history.push({ user: true, text: input, images }, { text: data.message, actions: data.actions, generation });
+      for (const entry of conversation.history) if (entry.images) delete entry.images;
+      conversation.history.push({ user: true, text: input, images, imageCount: images.length }, { text: data.message, actions: data.actions, generation });
       if (conversation.history.length > 12) conversation.history.splice(0, 2);
+      persist(conversation);
       conversation.text = "";
       conversation.images = [];
       text.value = "";
@@ -4755,7 +5708,7 @@ label.pill {
 
   function cancelInput() {
     request?.abort();
-    modelRequest?.abort();
+    connection.cancel();
     stopSpeech();
   }
 
@@ -4776,9 +5729,60 @@ label.pill {
   window.visualViewport?.addEventListener("resize", syncViewport);
   window.visualViewport?.addEventListener("scroll", syncViewport);
 
+  function newConversation(record) {
+    const history = record ? [...record.history] : [];
+    const saved = new Set();
+    for (const entry of history) {
+      for (const index of entry.savedIndices || []) saved.add(entry.actions[index]);
+    }
+    const id = record?.id || globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    return { id, mode: "auto", history, saved, text: "", images: [] };
+  }
+
+  function persist(conversation) {
+    if (!conversation.trip || !conversation.history.length) return;
+    const entries = conversation.history.map((entry) => entry.user
+      ? { user: true, text: entry.text, imageCount: entry.imageCount || 0 }
+      : { user: false, text: entry.text, actions: entry.actions,
+        savedIndices: entry.actions.flatMap((action, index) => conversation.saved.has(action) ? [index] : []) });
+    const saved = historyStore.save(conversation.trip.id, {id: conversation.id, updatedAt: Date.now(), history: entries});
+    get("ai-history-note").textContent = saved ? "聊天文字和草稿保存在本机" : "浏览器暂时无法保存聊天历史，本次对话仍可使用。";
+  }
+
+  function changeConversation(record) {
+    if (!host || !active?.trip || active.id === record?.id) return;
+    if ((active.text.trim() || active.images.length) && !confirm("切换对话会清空当前未发送的消息和图片。继续吗？")) return;
+    const {trip, today, review} = active;
+    sessions.set(trip.id, newConversation(record));
+    mount(host, {trip, today, review});
+  }
+
+  get("ai-new-chat").addEventListener("click", () => changeConversation());
+  get("ai-history-button").addEventListener("click", () => {
+    if (!active?.trip || historySheet.open) return;
+    const list = get("ai-history-list");
+    list.replaceChildren();
+    const records = historyStore.list(active.trip.id);
+    if (!records.length) addText(list, "hint", "这趟旅行还没有已发送的对话。");
+    for (const record of records) {
+      const first = record.history.find((entry) => entry.user);
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "button tonal ai-history-item";
+      addText(item, "", first?.text.trim().slice(0, 56) || (first?.imageCount ? `发送了 ${first.imageCount} 张图片` : "旅途对话"), "strong");
+      addText(item, "hint", new Date(record.updatedAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }), "span");
+      item.addEventListener("click", () => {
+        historySheet.close();
+        changeConversation(record);
+      });
+      list.append(item);
+    }
+    historySheet.showModal();
+  });
+
   function mount(container, { trip, today, review }) {
     const id = trip?.id ?? "";
-    if (!sessions.has(id)) sessions.set(id, { mode: "auto", history: [], saved: new Set(), text: "", images: [] });
+    if (!sessions.has(id)) sessions.set(id, newConversation(trip && historyStore.list(id)[0]));
     const next = sessions.get(id);
     const changed = active !== next || host !== container;
     if (host && active !== next) cancelInput();
@@ -4789,6 +5793,8 @@ label.pill {
     get("ai-trip-name").textContent = trip?.name || "尚未选择旅行";
     get("ai-composer").hidden = !trip;
     get("ai-mode").disabled = !trip;
+    get("ai-history-button").disabled = !trip;
+    get("ai-new-chat").disabled = !trip;
     if (!changed) return;
     text.value = active.text;
     get("ai-mode").value = active.mode;
