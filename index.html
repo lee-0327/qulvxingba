@@ -1853,6 +1853,7 @@ button.ai-history-item {
   padding: 8px 9px;
   overflow-y: auto;
   resize: none;
+  font-size: 16px;
 }
 
 .ai-input-label textarea::placeholder {
@@ -1975,6 +1976,50 @@ button.ai-history-item {
   .ai-attachments {
     max-height: 48px;
   }
+}
+
+#ai-view[data-ai-keyboard] > .ai-page.ai-sheet {
+  position: fixed;
+  z-index: 5;
+  inset: var(--ai-keyboard-top, 0px) 0 auto;
+  width: min(760px, 100%);
+  height: var(--ai-keyboard-height, 100dvh);
+  min-height: 0;
+  max-height: none;
+  flex: none;
+  padding-top: max(0px, calc(env(safe-area-inset-top) - var(--ai-keyboard-top, 0px)));
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+  overflow: hidden;
+  border-radius: 0;
+  background: var(--paper);
+}
+
+#ai-view[data-ai-keyboard] ~ .travel-nav,
+#ai-view[data-ai-keyboard] :is(.ai-connection, .ai-options, .ai-history-note, .ai-title-copy p) {
+  display: none;
+}
+
+#ai-view[data-ai-keyboard] .ai-titlebar {
+  margin-bottom: 0;
+  padding-inline: var(--ai-inset);
+  border-bottom: 1px solid var(--line);
+}
+
+#ai-view[data-ai-keyboard] .ai-title-copy h2 {
+  font-size: 17px;
+}
+
+#ai-view[data-ai-keyboard] .ai-messages {
+  padding-block: 8px;
+}
+
+#ai-view[data-ai-keyboard] .ai-composer {
+  max-height: min(60%, 158px);
+  border-radius: 0;
+}
+
+#ai-view[data-ai-keyboard] .ai-attachments {
+  max-height: 48px;
 }
 
 .quick-entry {
@@ -2958,7 +3003,7 @@ label.pill {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":4,"date":"2026-11-23","notes":["AI 接口新增服务商选择、获取模型列表、检测并保存和可选的回复测试。","AI 记改为轻记式对话，新增历史记录、新对话和一键填入示例。"]}</script>
+  <script type="application/json" id="app-release">{"version":5,"date":"2026-11-23","notes":["修复 iPhone 打开 AI 记键盘时对话被推走的问题。输入栏停在键盘上方，对话仍可滚动。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -5379,6 +5424,11 @@ label.pill {
   let request;
   let recognition;
   let preparing = false;
+  let viewportFrame = 0;
+  let viewportSettleTimer;
+  let restingHeight = 0;
+  let layoutWidth = 0;
+  let focusScrollY = null;
 
   function status(id, message = "") {
     const node = get(id);
@@ -5463,7 +5513,7 @@ label.pill {
           button.addEventListener("click", () => {
             if (text.readOnly) return;
             text.value = active.text = example;
-            text.focus();
+            text.focus({preventScroll: true});
             sync();
           });
         }
@@ -5517,7 +5567,7 @@ label.pill {
   }
 
   function keyboardDictation() {
-    text.focus();
+    text.focus({preventScroll: true});
     status("ai-dictation", "可以点系统键盘上的麦克风听写，核对文字后发送。");
   }
 
@@ -5651,8 +5701,8 @@ label.pill {
     if (!input && !active.images.length) return;
     if (navigator.onLine === false) return status("ai-status", "AI 识别需要联网。离线时可以在行程、吃什么和记账里手动添加。");
     if (!config) {
+      text.blur();
       settings.open = true;
-      get("ai-base").focus();
       return status("ai-settings-status", "请先填写你要使用的 AI 接口和模型。");
     }
     if (inputMode === "text" && active.images.length) {
@@ -5715,19 +5765,84 @@ label.pill {
   function unmount() {
     if (!host) return;
     cancelInput();
+    if (document.activeElement === text) text.blur();
+    clearTimeout(viewportSettleTimer);
+    clearKeyboard(host);
+    restingHeight = 0;
+    focusScrollY = null;
     host.closest(".page")?.style.removeProperty("--ai-viewport-height");
     get("ai-parking").append(dialog);
     host = undefined;
   }
 
-  function syncViewport() {
-    const viewport = window.visualViewport;
-    if (!host || !viewport || viewport.scale !== 1) return;
-    host.closest(".page")?.style.setProperty("--ai-viewport-height", `${viewport.height}px`);
+  const mobileLayout = matchMedia("(max-width: 760px), (pointer: coarse)");
+
+  function clearKeyboard(container) {
+    container.removeAttribute("data-ai-keyboard");
+    container.style.removeProperty("--ai-keyboard-height");
+    container.style.removeProperty("--ai-keyboard-top");
   }
 
-  window.visualViewport?.addEventListener("resize", syncViewport);
-  window.visualViewport?.addEventListener("scroll", syncViewport);
+  function syncViewport() {
+    const viewport = window.visualViewport;
+    if (!host || !viewport || viewport.height <= 0) return;
+    const wasOpen = host.hasAttribute("data-ai-keyboard");
+    if (!mobileLayout.matches || Math.abs(viewport.scale - 1) > 0.02) {
+      if (wasOpen) clearKeyboard(host);
+      restingHeight = 0;
+      return;
+    }
+
+    const layout = document.documentElement;
+    const height = Math.floor(viewport.height);
+    const focused = document.activeElement === text;
+    const editingAnotherField = !focused && document.activeElement?.matches("input, textarea, [contenteditable='true']");
+    if (layoutWidth !== layout.clientWidth || !restingHeight || (!focused && !wasOpen)) restingHeight = height;
+    layoutWidth = layout.clientWidth;
+    // Safari can pan the visual viewport independently of the document when opening its keyboard.
+    const fullHeight = Math.max(restingHeight, layout.clientHeight);
+    const keyboard = (focused || (wasOpen && !editingAnotherField))
+      && fullHeight - height >= Math.min(145, Math.max(96, fullHeight * 0.2));
+    const followLatest = active.history.length && messages.scrollHeight - messages.clientHeight - messages.scrollTop < 24;
+
+    if (keyboard) {
+      host.style.setProperty("--ai-keyboard-top", `${Math.max(0, viewport.offsetTop)}px`);
+      host.style.setProperty("--ai-keyboard-height", `${height}px`);
+      host.setAttribute("data-ai-keyboard", "");
+    } else {
+      if (wasOpen) clearKeyboard(host);
+      host.closest(".page")?.style.setProperty("--ai-viewport-height", `${height}px`);
+      if (wasOpen && !editingAnotherField && focusScrollY !== null && window.scrollY !== focusScrollY) {
+        window.scrollTo(0, focusScrollY);
+      }
+      if (wasOpen || !focused) focusScrollY = null;
+    }
+    if (followLatest) messages.scrollTop = messages.scrollHeight;
+  }
+
+  function queueViewportSync() {
+    if (!host || viewportFrame) return;
+    viewportFrame = requestAnimationFrame(() => {
+      viewportFrame = 0;
+      syncViewport();
+    });
+  }
+
+  function syncAfterFocus() {
+    queueViewportSync();
+    clearTimeout(viewportSettleTimer);
+    // Some Safari configurations report their final viewport after the keyboard animation.
+    viewportSettleTimer = setTimeout(queueViewportSync, 320);
+  }
+
+  text.addEventListener("focus", () => {
+    if (host && !host.hasAttribute("data-ai-keyboard")) focusScrollY = window.scrollY;
+    syncAfterFocus();
+  });
+  text.addEventListener("blur", syncAfterFocus);
+  window.visualViewport?.addEventListener("resize", queueViewportSync);
+  window.visualViewport?.addEventListener("scroll", queueViewportSync);
+  window.addEventListener("resize", queueViewportSync);
 
   function newConversation(record) {
     const history = record ? [...record.history] : [];
