@@ -260,6 +260,9 @@ h1, h2, h3 {
 }
 
 .travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) {
+  --cover-height: clamp(245px, 33vw, 375px);
+  --cover-block-padding: clamp(21px, 4vw, 40px);
+  --cover-inline-padding: var(--cover-block-padding);
   background: #394c3f;
   color: var(--surface);
 }
@@ -276,10 +279,38 @@ h1, h2, h3 {
 }
 
 .travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) .hero-inner {
-  min-height: clamp(245px, 33vw, 375px);
+  min-height: var(--cover-height);
   align-items: flex-end;
   justify-content: space-between;
-  padding: clamp(21px, 4vw, 40px);
+  padding: var(--cover-block-padding) var(--cover-inline-padding);
+}
+
+.travel-hero:has(> .trip-date-range) {
+  display: grid;
+  min-height: var(--cover-height, 0);
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.travel-hero[data-view="itinerary"]:has(> .trip-date-range) > .hero-inner {
+  min-height: 0;
+  padding-block-end: 8px;
+}
+
+.trip-date-range {
+  position: relative;
+  justify-self: end;
+  margin: 0 var(--cover-inline-padding, 18px) var(--cover-block-padding, 18px);
+  padding: 4px 10px;
+  border: 1px solid rgb(255 254 250 / .36);
+  border-radius: 999px;
+  background: rgb(18 32 23 / .78);
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+  text-align: end;
+  overflow-wrap: anywhere;
 }
 
 .travel-hero.hero-empty:has(> .trip-cover-image) .hero-inner {
@@ -1428,6 +1459,13 @@ summary {
   grid-column: 1 / -1;
 }
 
+.trip-date-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
 fieldset {
   min-width: 0;
   margin: 0;
@@ -1798,9 +1836,10 @@ label.pill {
     max-width: calc(100vw - 112px);
   }
 
-  .travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) .hero-inner {
-    min-height: clamp(215px, 66vw, 300px);
-    padding: 21px 18px;
+  .travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) {
+    --cover-height: clamp(215px, 66vw, 300px);
+    --cover-block-padding: 21px;
+    --cover-inline-padding: 18px;
   }
 
   .travel-hero:has(> .trip-cover-image) h1,
@@ -1994,6 +2033,12 @@ label.pill {
   }
 }
 
+@media (max-width: 374px) {
+  .trip-date-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 360px) {
   .overview-card {
     grid-template-columns: 25px minmax(0, 1fr);
@@ -2081,6 +2126,13 @@ label.pill {
       </div>
       <div class="sheet-body">
         <label class="field">旅行名称<input id="trip-name" name="name" maxlength="40" placeholder="云南丽江游" required></label>
+        <fieldset class="field-set">
+          <legend>旅行日期 <span class="optional">选填</span></legend>
+          <div class="trip-date-fields">
+            <label class="field">出发日期<input id="trip-start-date" name="startDate" type="date"></label>
+            <label class="field">到达日期<input id="trip-end-date" name="endDate" type="date"></label>
+          </div>
+        </fieldset>
         <div id="trip-existing-members"></div>
         <label class="field"><span id="trip-member-label">同行人</span><textarea id="trip-members" name="members" rows="2" maxlength="400" placeholder="你、小李、小陈"></textarea><span class="hint" id="trip-member-hint">填昵称，用逗号、顿号或换行隔开。</span></label>
         <label class="field">行程链接 <span class="optional">选填</span><input id="trip-link" name="link" type="url" maxlength="1000" placeholder="https://"></label>
@@ -2503,6 +2555,16 @@ label.pill {
     return Number.isNaN(afternoon.getTime()) ? "日期待定" : dayFormat.format(afternoon);
   }
 
+  function withinTripDates(date, range) {
+    return !range || (date >= range.startDate && date <= range.endDate);
+  }
+
+  function defaultDate(today, range) {
+    if (!range) return today;
+    if (today < range.startDate) return range.startDate;
+    return today > range.endDate ? range.endDate : today;
+  }
+
   function daysOf(trip) {
     const entries = [...plansOf(trip)].sort((a, b) =>
       (a.date || "9999-12-31").localeCompare(b.date || "9999-12-31")
@@ -2580,7 +2642,8 @@ label.pill {
       <div class="sheet-body">
         <label class="field">安排名称<input id="plan-title" maxlength="70" required placeholder="例如 去古城吃午饭"></label>
         <div class="form-grid">
-          <label class="field">日期<input type="date" id="plan-date" required></label>
+          <div class="field"><label for="plan-date">日期</label><input type="date" id="plan-date" aria-describedby="plan-date-hint" required>
+            <span class="hint" id="plan-date-hint" hidden></span></div>
           <label class="field">时间 <span class="optional">选填</span><input type="time" id="plan-time"></label>
         </div>
         <div class="form-grid">
@@ -2643,7 +2706,20 @@ label.pill {
     sheet.querySelector("#plan-restaurant-field").hidden = restaurants.length === 0;
     sheet.querySelector("#plan-sheet-heading").textContent = item ? "编辑安排" : "添加安排";
     sheet.querySelector("#plan-title").value = item?.title || restaurant?.name || "";
-    sheet.querySelector("#plan-date").value = item?.date || ctx.today();
+    const range = ctx.tripDates(trip);
+    const legacyDate = Boolean(item?.date && !withinTripDates(item.date, range));
+    const dateInput = sheet.querySelector("#plan-date");
+    if (range && !legacyDate) {
+      dateInput.min = range.startDate;
+      dateInput.max = range.endDate;
+    } else {
+      dateInput.removeAttribute("min");
+      dateInput.removeAttribute("max");
+    }
+    dateInput.value = item?.date || defaultDate(ctx.today(), range);
+    const dateHint = sheet.querySelector("#plan-date-hint");
+    dateHint.textContent = legacyDate ? `可保留原日期。要改日期时，请选 ${range.startDate} 至 ${range.endDate}。` : "";
+    dateHint.hidden = !legacyDate;
     sheet.querySelector("#plan-time").value = item?.time || "";
     sheet.querySelector("#plan-kind").value = item?.kind || (restaurant ? "用餐" : "游玩");
     sheet.querySelector("#plan-place").value = item?.place ?? restaurant?.city ?? "";
@@ -2654,26 +2730,33 @@ label.pill {
     if (!matchMedia("(max-width: 700px)").matches) sheet.querySelector("#plan-title").focus();
   }
 
+  function showPlanError(sheet, message) {
+    const error = sheet.querySelector("#plan-error");
+    error.textContent = message;
+    error.hidden = false;
+  }
+
   function savePlan(sheet) {
     const {ctx, tripId, id} = editor;
     const value = (field) => sheet.querySelector(`#plan-${field}`).value.trim();
     const title = value("title");
     const date = value("date");
-    if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      const error = sheet.querySelector("#plan-error");
-      error.textContent = "请填写安排名称和有效日期。";
-      error.hidden = false;
-      return;
-    }
+    if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return showPlanError(sheet, "请填写安排名称和有效日期。");
 
     const restaurantId = value("restaurant");
     const plan = {id: id || ctx.uid(), title, date, time: value("time"), kind: value("kind"), place: value("place"), notes: value("notes")};
     const success = ctx.update(tripId, (trip) => {
-      if (restaurantOf(trip, restaurantId)) plan.restaurantId = restaurantId;
       const entries = plansOf(trip);
-      if (id && !entries.some((entry) => entry.id === id)) throw new Error("这条安排已删除，请重新添加。");
+      const original = id ? entries.find((entry) => entry.id === id) : undefined;
+      if (id && !original) throw new ctx.LedgerChangeError("这条安排已删除，请重新添加。");
+      const range = ctx.tripDates(trip);
+      if (date !== original?.date && !withinTripDates(date, range)) {
+        sheet.querySelector("#plan-date").focus();
+        throw new ctx.LedgerChangeError(`请选择 ${range.startDate} 至 ${range.endDate} 之间的日期。`);
+      }
+      if (restaurantOf(trip, restaurantId)) plan.restaurantId = restaurantId;
       trip.itinerary = id ? entries.map((entry) => entry.id === id ? plan : entry) : [...entries, plan];
-    });
+    }, sheet.querySelector("#plan-error"));
     if (!success) return;
     sheet.close();
     ctx.setView("itinerary");
@@ -3140,6 +3223,7 @@ label.pill {
   let categoriesFilter = "";
   let placeFilter = "";
   let tripFormId = null;
+  let tripFormDates;
   let expenseFormTripId = null;
   let expenseFormId = null;
   let expenseLinks = {};
@@ -3223,6 +3307,30 @@ label.pill {
 
   class LedgerChangeError extends Error {}
 
+  function calendarDay(date) {
+    if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) || date.startsWith("0000-")) return NaN;
+    const midnight = new Date(`${date}T00:00:00Z`);
+    return Number.isFinite(midnight.getTime()) && midnight.toISOString().slice(0, 10) === date
+      ? midnight.getTime() : NaN;
+  }
+
+  function tripDates({ startDate, endDate }) {
+    const start = calendarDay(startDate);
+    const end = calendarDay(endDate);
+    if (!(end >= start)) return null;
+    return { startDate, endDate, days: (end - start) / 86400000 + 1 };
+  }
+
+  function formatTripDates(trip) {
+    const dates = tripDates(trip);
+    if (!dates) return "";
+    const { startDate, endDate, days } = dates;
+    const offset = startDate.slice(0, 4) === endDate.slice(0, 4) ? 5 : 0;
+    const format = (date) => date.slice(offset).replaceAll("-", ".");
+    const range = days === 1 ? format(startDate) : `${format(startDate)} — ${format(endDate)}`;
+    return `${range} · ${days} 天`;
+  }
+
   function getTrip(id = state.activeId) {
     return state.trips.find((trip) => trip.id === id);
   }
@@ -3238,7 +3346,7 @@ label.pill {
     update: (tripId, mutate, errorElement) => save(
       (current) => mutate(getCurrentTrip(current, tripId)), errorElement
     ),
-    notify, escapeHtml, uid, today, readLink, setView,
+    notify, escapeHtml, uid, today, readLink, setView, tripDates, LedgerChangeError,
     record(draft) {
       const trip = getTrip() || state.trips[0];
       if (trip) openExpenseForm(trip, null, draft);
@@ -3392,6 +3500,7 @@ label.pill {
     ].filter(Boolean))];
     const route = readLink(trip.link);
     const isLedger = activeView === "ledger";
+    const dateRange = activeView === "itinerary" ? formatTripDates(trip) : "";
     if (!places.includes(placeFilter)) placeFilter = "";
     const hero = `<section class="hero travel-hero" data-view="${activeView}">
       ${isLedger ? "" : coverMarkup()}
@@ -3406,6 +3515,7 @@ label.pill {
           ${isLedger ? '<div class="hero-actions desktop-actions"><button type="button" class="button primary" data-action="new-expense">＋ 记一笔</button><button type="button" class="button tonal" data-action="settle">AA 结算</button></div>' : ""}
         </div>
       </div>
+      ${dateRange ? `<span class="trip-date-range">${dateRange}</span>` : ""}
       ${isLedger ? placeTabsMarkup(places) : ""}
     </section>`;
     const page = {
@@ -3457,11 +3567,14 @@ label.pill {
 
   function openTripForm(trip) {
     tripFormId = trip?.id || null;
+    tripFormDates = { startDate: trip?.startDate || "", endDate: trip?.endDate || "" };
     $("trip-form").reset();
     $("trip-heading").textContent = trip ? "旅行设置" : "新建旅行";
     $("trip-submit").textContent = trip ? "保存设置" : "创建旅行";
     $("trip-member-label").textContent = trip ? "新增同行人" : "同行人";
     $("trip-name").value = trip?.name || "";
+    $("trip-start-date").value = tripFormDates.startDate;
+    $("trip-end-date").value = tripFormDates.endDate;
     $("trip-link").value = trip?.link || "";
     $("trip-existing-members").innerHTML = trip
       ? `<div class="form-grid existing-members">${trip.members.map(({id, name}, index) => `<label class="field">
@@ -3477,6 +3590,8 @@ label.pill {
     event.preventDefault();
     const error = $("trip-error");
     const name = $("trip-name").value.trim();
+    const startDate = $("trip-start-date").value;
+    const endDate = $("trip-end-date").value;
     const rawLink = $("trip-link").value.trim();
     const link = readLink(rawLink);
     const existingMembers = [...$("trip-existing-members").querySelectorAll("input")].map((input) => ({
@@ -3486,12 +3601,15 @@ label.pill {
       .map((name) => name.trim()).filter(Boolean).map((name) => ({ id: uid(), name }));
     const members = [...existingMembers, ...added];
     if (!name) return setMessage(error, "请填写旅行名称。");
+    if (Boolean(startDate) !== Boolean(endDate)) return setMessage(error, "请同时填写出发日期和到达日期，也可以都留空。");
+    if (startDate && !tripDates({ startDate, endDate })) return setMessage(error, "请检查日期，到达日期须为出发当天或之后。");
     if (!members.length || members.some((member) => !member.name)) return setMessage(error, "请填写至少一位同行人的昵称。");
     if (members.some((member) => [...member.name].length > 20)) return setMessage(error, "每个昵称最多 20 个字。");
     if (new Set(members.map((member) => member.name)).size !== members.length) return setMessage(error, "有重复昵称，请给每位同行人一个不同的昵称。");
     if (rawLink && !link) return setMessage(error, "行程链接请用 http:// 或 https:// 开头。");
 
     const id = tripFormId || uid();
+    const details = { name, members, link, startDate, endDate };
     const success = save((current) => {
       if (tripFormId) {
         const trip = getCurrentTrip(current, id);
@@ -3499,9 +3617,12 @@ label.pill {
           || trip.members.some((member, index) => member.id !== existingMembers[index].id)) {
           throw new LedgerChangeError("同行人已在另一个窗口更新。请关闭后重新打开编辑。");
         }
-        Object.assign(trip, { name, members, link });
+        if ((trip.startDate || "") !== tripFormDates.startDate || (trip.endDate || "") !== tripFormDates.endDate) {
+          throw new LedgerChangeError("旅行日期已在另一个窗口更新。请关闭后重新打开编辑。");
+        }
+        Object.assign(trip, details);
       } else {
-        current.trips.unshift({ id, name, members, link, expenses: [] });
+        current.trips.unshift({ id, ...details, expenses: [] });
       }
       current.activeId = id;
     }, error);
@@ -3658,10 +3779,13 @@ label.pill {
   }
 
   function openSwitch() {
-    $("trip-list").innerHTML = state.trips.map((trip) => `<button type="button" class="trip-choice" data-action="select-trip" data-id="${escapeHtml(trip.id)}">
-      <strong>${escapeHtml(trip.name)}</strong>
-      <span>${trip.id === state.activeId ? "当前账本 · " : ""}${trip.members.length} 人 · ${trip.expenses.length} 笔</span>
-    </button>`).join("");
+    $("trip-list").innerHTML = state.trips.map((trip) => {
+      const dates = formatTripDates(trip);
+      return `<button type="button" class="trip-choice" data-action="select-trip" data-id="${escapeHtml(trip.id)}">
+        <strong>${escapeHtml(trip.name)}</strong>
+        <span>${trip.id === state.activeId ? "当前账本 · " : ""}${trip.members.length} 人 · ${trip.expenses.length} 笔${dates ? ` · ${dates}` : ""}</span>
+      </button>`;
+    }).join("");
     switchSheet.showModal();
   }
 
@@ -3779,7 +3903,8 @@ label.pill {
       ({id: uid(), title, amountCents, payerId, participantIds, date, category, place}));
     save((current) => {
       const prior = current.trips.find((trip) => trip.isDemo);
-      if (!prior) current.trips.unshift({id, name: APP_NAME, members, expenses, isDemo: true, ...samplePlan(id)});
+      if (!prior) current.trips.unshift({id, name: APP_NAME, members, expenses, isDemo: true,
+        startDate: "2026-10-01", endDate: "2026-10-02", ...samplePlan(id)});
       current.activeId = prior?.id || id;
     });
   }
