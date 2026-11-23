@@ -3076,7 +3076,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":9,"date":"2026-11-23","notes":["底部前两项改为「行程」和「吃什么」。旅行日期可在行程页查看。","流水和统计合并到「记账」，同页可查看支出明细、分类支出、同行人分摊和 AA 结算。"]}</script>
+  <script type="application/json" id="app-release">{"version":10,"date":"2026-11-23","notes":["底部导航中间的入口改名为「AI记」。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -6836,7 +6836,7 @@ body:has(.travel-nav) .status {
   const navItems = [
     ["itinerary", "行程", '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18m-13 5h3m2 2h3"/>'],
     ["restaurants", "吃什么", '<path d="M3 8h18c0 5-3.6 9-9 9s-9-4-9-9Zm5 12h8"/>'],
-    ["ai", "AI记账", '<path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/>'],
+    ["ai", "AI记", '<path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/>'],
     ["ledger", "记账", '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'],
     ["settings", "设置", '<circle cx="12" cy="12" r="4"/><path d="m9.5 3-1 2-2 .7-2.2-.1L2 9l1.2 2v2L2 15l2.3 3.4 2.2-.1 2 .7 1 2h5l1-2 2-.7 2.2.1L22 15l-1.2-2v-2L22 9l-2.3-3.4-2.2.1-2-.7-1-2Z"/>']
   ];
