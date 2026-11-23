@@ -1,0 +1,8 @@
+# Preserve the exact asset bytes used by the offline integrity check.
+/index.html -text
+/manifest.webmanifest -text
+/register-offline.js -text
+/sw.js -text
+/icon-180.png -text
+/icon-192.png -text
+/icon-512.png -text
