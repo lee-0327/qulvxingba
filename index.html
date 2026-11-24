@@ -3069,9 +3069,10 @@ body:has(.travel-nav) .status {
   --plan-marker: #b5493a;
   --plan-track: #e7bfb2;
   --plan-highlight: #fbefea;
-  --plan-stop-width: clamp(55px, 9vw, 75px);
-  --plan-marker-x: calc(var(--plan-stop-width) - 8px);
-  --plan-marker-y: 25px;
+  --plan-columns: max-content 14px minmax(0, 1fr);
+  --plan-time-font-size: .875rem;
+  --plan-time-top: 14px;
+  --plan-row-gap: 10px;
 }
 
 .plan-date-toolbar {
@@ -3153,44 +3154,61 @@ body:has(.travel-nav) .status {
 }
 
 .itinerary-panel .plan-list {
+  display: grid;
+  grid-template-columns: var(--plan-columns);
+  column-gap: 8px;
   padding-block: 10px 0;
 }
 
 .itinerary-panel .plan-item {
-  position: relative;
   display: grid;
-  grid-template-columns: var(--plan-stop-width) minmax(0, 1fr);
+  grid-column: 1 / -1;
+  grid-template-columns: var(--plan-columns);
   gap: 0 8px;
   min-height: 0;
-  padding: 0 0 10px;
+  padding: 0 0 var(--plan-row-gap);
   border: 0;
+}
+
+@supports (grid-template-columns: subgrid) {
+  .itinerary-panel .plan-item {
+    grid-template-columns: subgrid;
+  }
 }
 
 .itinerary-panel .plan-item:last-child {
   padding-bottom: 0;
 }
 
-.plan-timed::before, .plan-timed:has(+ .plan-timed)::after {
+.plan-marker {
+  --plan-marker-y: calc(var(--plan-time-top) + .75em);
+  position: relative;
+  font-size: var(--plan-time-font-size);
+}
+
+.plan-timed > .plan-marker::before,
+.plan-timed:has(+ .plan-timed) > .plan-marker::after {
   position: absolute;
   inset-block-start: var(--plan-marker-y);
-  inset-inline-start: var(--plan-marker-x);
+  inset-inline: 0;
+  margin-inline: auto;
   pointer-events: none;
   content: "";
 }
 
-.plan-timed::before {
+.plan-timed > .plan-marker::before {
   z-index: 1;
   width: 9px;
   height: 9px;
-  margin: -4px 0 0 -4px;
+  transform: translateY(-50%);
   border: 1px solid var(--surface);
   border-radius: 50%;
   background: var(--plan-marker);
   box-shadow: 0 0 0 2px var(--plan-highlight);
 }
 
-.plan-timed:has(+ .plan-timed)::after {
-  inset-block-end: calc(-1 * var(--plan-marker-y));
+.plan-timed:has(+ .plan-timed) > .plan-marker::after {
+  inset-block-end: calc(-1 * (var(--plan-marker-y) + var(--plan-row-gap)));
   width: 1px;
   background: var(--plan-track);
 }
@@ -3198,7 +3216,8 @@ body:has(.travel-nav) .status {
 .plan-stop {
   min-width: 0;
   align-self: start;
-  padding: 14px 16px 0 2px;
+  padding-block-start: var(--plan-time-top);
+  padding-inline-start: 2px;
 }
 
 .itinerary-panel .plan-time {
@@ -3212,8 +3231,9 @@ body:has(.travel-nav) .status {
 
 .itinerary-panel .plan-timed .plan-time {
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--plan-time-font-size);
   font-weight: 700;
+  line-height: 1.5;
   white-space: nowrap;
 }
 
@@ -4409,7 +4429,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":15,"date":"2026-11-24","notes":["记账首页并排显示实际支出、分摊总数和实际单人数额，下方列出参与分摊的成员和支出明细。","查看结算显示转账建议、每人已付和应摊金额，并支持查看个人明细。","消费统计新增分类占比和每日支出，保留记账页的简洁布局。"]}</script>
+  <script type="application/json" id="app-release">{"version":16,"date":"2026-11-24","notes":["行程时间和红点分列显示，手机窄屏和放大字号时也留有间距。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -4877,6 +4897,7 @@ body:has(.travel-nav) .status {
       : '<span class="plan-time">待定</span>';
     return `<article class="plan-item${item.time ? " plan-timed" : ""}">
       <div class="plan-stop">${time}</div>
+      <div class="plan-marker" aria-hidden="true"></div>
       <div class="plan-card">
         <div class="plan-item-main">
           <div class="plan-item-heading"><span class="category-chip" data-tone="${escapeHtml(categories?.tone(kind) || "other")}">${categories?.mark(kind) || ""}${escapeHtml(kind)}</span><h3>${escapeHtml(item.title)}</h3></div>
