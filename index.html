@@ -32,6 +32,7 @@
   --radius-hero: 20px;
   --max-width: 1040px;
   --touch: 44px;
+  --topbar-height: calc(68px + env(safe-area-inset-top, 0px));
   --travel-nav-height: 66px;
   --travel-nav-bottom: calc(9px + env(safe-area-inset-bottom));
   --travel-nav-space: calc(var(--travel-nav-height) + var(--travel-nav-bottom));
@@ -45,6 +46,7 @@
 html {
   min-width: 280px;
   background: var(--paper);
+  scroll-padding-top: calc(var(--topbar-height) + 8px);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -120,14 +122,18 @@ h1, h2, h3 {
 }
 
 .topbar {
+  position: sticky;
+  z-index: 4;
+  top: 0;
   display: flex;
-  min-height: 68px;
+  min-height: var(--topbar-height);
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 4px 12px;
   margin-inline: calc(-1 * var(--gutter));
-  padding: 8px var(--gutter);
+  padding-block: calc(8px + env(safe-area-inset-top, 0px)) 8px;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px));
   border-bottom: 1px solid var(--line);
   background: var(--surface);
 }
@@ -1632,7 +1638,7 @@ button.expense-row:active {
   container: ai-dialog / size;
   display: flex;
   width: min(760px, 100%);
-  height: clamp(300px, calc(100dvh - 92px - var(--travel-nav-space)), 860px);
+  height: clamp(300px, calc(100dvh - var(--topbar-height) - 24px - var(--travel-nav-space)), 860px);
   max-height: none;
   flex-direction: column;
   margin: 0 auto;
@@ -2613,6 +2619,10 @@ body:has(.travel-nav) .status {
 }
 
 @media (max-width: 560px) {
+  html {
+    --topbar-height: calc(65px + env(safe-area-inset-top, 0px));
+  }
+
   .page {
     padding-bottom: 20px;
   }
@@ -2622,7 +2632,6 @@ body:has(.travel-nav) .status {
   }
 
   .topbar {
-    min-height: 65px;
     column-gap: 8px;
   }
 
@@ -3114,7 +3123,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":11,"date":"2026-11-23","notes":["行程页的每日安排可以单独折叠或展开，收起后仍显示日期和安排数量。"]}</script>
+  <script type="application/json" id="app-release">{"version":12,"date":"2026-11-24","notes":["顶栏固定在屏幕上方，滚动内容时仍可使用更新、新建旅行和切换账本。"]}</script>
   <script>
 (() => {
   'use strict';
