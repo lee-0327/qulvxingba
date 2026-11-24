@@ -36,7 +36,6 @@
   --travel-nav-height: 66px;
   --travel-nav-bottom: calc(9px + env(safe-area-inset-bottom));
   --travel-nav-space: calc(var(--travel-nav-height) + var(--travel-nav-bottom));
-  --ledger-action-height: 62px;
 }
 
 *, *::before, *::after {
@@ -317,14 +316,14 @@ h1, h2, h3 {
   pointer-events: none;
 }
 
-.travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) {
+.travel-hero:has(> .trip-cover-image) {
   --cover-height: clamp(214px, 29vw, 322px);
   --cover-block-padding: clamp(21px, 4vw, 40px);
   --cover-inline-padding: var(--cover-block-padding);
   background: var(--sage);
 }
 
-.travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"])::before {
+.travel-hero:has(> .trip-cover-image)::before {
   position: absolute;
   z-index: -1;
   inset: 0;
@@ -335,7 +334,7 @@ h1, h2, h3 {
   pointer-events: none;
 }
 
-.travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) .hero-inner {
+.travel-hero:has(> .trip-cover-image) > .hero-inner {
   min-height: var(--cover-height);
   align-items: flex-end;
   justify-content: space-between;
@@ -348,7 +347,7 @@ h1, h2, h3 {
   grid-template-rows: minmax(0, 1fr) auto;
 }
 
-.travel-hero[data-view="itinerary"]:has(> .trip-date-range) > .hero-inner {
+.travel-hero:has(> .trip-date-range) > .hero-inner {
   min-height: 0;
   padding-block-end: 8px;
 }
@@ -379,15 +378,8 @@ h1, h2, h3 {
   align-self: flex-start;
 }
 
-.travel-hero[data-view="ledger"] .trip-cover-image,
-.travel-hero[data-view="restaurants"] .trip-cover-image,
 .travel-hero:has(> .trip-cover-image) .hero-art {
   display: none;
-}
-
-.travel-hero[data-view="ledger"] .hero-inner,
-.travel-hero[data-view="restaurants"] .hero-inner {
-  min-height: 128px;
 }
 
 .hero-context {
@@ -400,12 +392,63 @@ h1, h2, h3 {
   gap: 7px;
 }
 
-.ai-entry-button {
+.travel-hero:is([data-view="itinerary"], [data-view="restaurants"]) {
+  --cover-action-inset: 14px;
+}
+
+.travel-hero:is([data-view="itinerary"], [data-view="restaurants"]) > .hero-inner {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-block-start: calc(var(--cover-action-inset) + var(--touch) + 8px);
+}
+
+.hero-context:has(> .hero-settings-button) {
+  position: absolute;
+  inset-block-start: var(--cover-action-inset);
+  inset-inline-end: var(--cover-action-inset);
+}
+
+.hero-context > .hero-settings-button {
+  background: var(--surface);
   white-space: nowrap;
 }
 
-.travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) .hero-context > .button.tonal {
-  background: var(--surface);
+.travel-hero[data-view="ledger"] {
+  --ledger-hero-inset: clamp(12px, 2.2vw, 20px);
+  --ledger-hero-gap: clamp(8px, 1.6vw, 14px);
+}
+
+.travel-hero[data-view="ledger"] > .hero-inner {
+  min-height: 0;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: var(--ledger-hero-inset) var(--ledger-hero-inset) 10px;
+}
+
+.travel-hero[data-view="ledger"] .hero-context {
+  flex: 0 1 auto;
+  margin-inline-start: auto;
+}
+
+.ledger-hero-actions {
+  gap: 6px;
+}
+
+.ledger-hero-actions > .button {
+  padding-inline: 10px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.travel-hero[data-view="ledger"] > .trip-overview {
+  gap: var(--ledger-hero-gap);
+  margin: 0 var(--ledger-hero-inset) var(--ledger-hero-inset);
+}
+
+.travel-hero[data-view="ledger"] .overview-card {
+  min-height: 0;
+  padding: clamp(10px, 1.6vw, 14px);
 }
 
 .hero-kicker {
@@ -2468,10 +2511,6 @@ label.pill {
   min-height: 140px;
 }
 
-.action-dock {
-  display: none;
-}
-
 .travel-nav {
   position: fixed;
   z-index: 3;
@@ -2643,7 +2682,7 @@ body:has(.travel-nav) .status {
     max-width: calc(100vw - 112px);
   }
 
-  .travel-hero:has(> .trip-cover-image):not([data-view="ledger"], [data-view="restaurants"]) {
+  .travel-hero:has(> .trip-cover-image) {
     --cover-height: clamp(195px, 58vw, 278px);
     --cover-block-padding: 21px;
     --cover-inline-padding: 18px;
@@ -2654,18 +2693,13 @@ body:has(.travel-nav) .status {
     max-width: 100%;
   }
 
-  .travel-hero[data-view="ledger"] .hero-inner,
-  .travel-hero[data-view="restaurants"] .hero-inner {
-    min-height: 0;
-  }
-
   .hero-context > .button {
     padding-inline: 10px;
   }
 
-  .hero-context:has(> .ai-entry-button) {
-    flex-direction: column;
-    align-items: stretch;
+  .travel-hero[data-view="ledger"] h1,
+  .travel-hero[data-view="ledger"] .hero-meta {
+    max-width: 100%;
   }
 
   .hero-art {
@@ -2712,10 +2746,6 @@ body:has(.travel-nav) .status {
     font-size: clamp(18px, 5.4vw, 25px);
   }
 
-  .desktop-actions {
-    display: none;
-  }
-
   .starter {
     flex-wrap: wrap;
     align-items: flex-start;
@@ -2746,57 +2776,6 @@ body:has(.travel-nav) .status {
 
   .side-panel, .stats-panel {
     padding-inline: 14px;
-  }
-
-  .action-dock {
-    position: sticky;
-    z-index: 2;
-    bottom: 0;
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-    gap: 8px;
-    margin: 12px calc(var(--gutter) * -1) -20px;
-    padding: 8px var(--gutter) max(8px, env(safe-area-inset-bottom));
-    border-top: 1px solid var(--line);
-    background: var(--surface);
-    box-shadow: 0 -4px 14px #26382413;
-  }
-
-  .action-dock > .button {
-    width: 100%;
-  }
-
-  .action-dock > .button.primary {
-    box-shadow: 0 2px 6px #3d604127;
-  }
-
-  .page:has(.travel-nav) .action-dock {
-    position: fixed;
-    inset: auto max(12px, env(safe-area-inset-right)) calc(var(--travel-nav-space) + 8px) max(12px, env(safe-area-inset-left));
-    z-index: 2;
-    max-width: 420px;
-    min-height: var(--ledger-action-height);
-    margin: 0 auto;
-    padding: 7px 8px;
-    border: 1px solid var(--line);
-    border-radius: 17px;
-  }
-
-  .page:has(.travel-nav):has(.action-dock) {
-    padding-bottom: calc(var(--travel-nav-space) + var(--ledger-action-height) + 34px);
-  }
-
-  html:has(.travel-nav):has(.action-dock) {
-    scroll-padding-bottom: calc(var(--travel-nav-space) + var(--ledger-action-height) + 24px);
-  }
-
-  body:has(.travel-nav):has(.action-dock) .status {
-    bottom: calc(var(--travel-nav-space) + var(--ledger-action-height) + 21px);
-  }
-
-  html:has(dialog[open]) .action-dock {
-    visibility: hidden;
   }
 
   .sheet {
@@ -3315,11 +3294,11 @@ body:has(.travel-nav) .status {
   object-position: 50% 47%;
 }
 
-.travel-hero[data-view="itinerary"]:has(> .trip-cover-photo) {
+.travel-hero:has(> .trip-cover-photo) {
   background: #354738;
 }
 
-.travel-hero[data-view="itinerary"]:has(> .trip-cover-photo)::before {
+.travel-hero:has(> .trip-cover-photo)::before {
   background:
     linear-gradient(90deg, rgb(13 25 20 / .71), rgb(13 25 20 / .43) 52%, transparent 82%),
     linear-gradient(0deg, rgb(13 25 20 / .92), rgb(13 25 20 / .67) 40%, rgb(13 25 20 / .10) 87%);
@@ -3330,31 +3309,6 @@ body:has(.travel-nav) .status {
   text-shadow: 0 1px 4px rgb(13 25 20 / .68);
 }
 
-.cover-edit-button {
-  white-space: nowrap;
-}
-
-@media (max-width: 560px) {
-  .travel-hero[data-view="itinerary"]:has(> .trip-cover-image) .hero-inner {
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-end;
-    gap: 12px;
-    padding-block-start: 60px;
-  }
-
-  .travel-hero[data-view="itinerary"] .hero-context:has(> .ai-entry-button) {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .travel-hero[data-view="itinerary"] .cover-edit-button {
-    position: absolute;
-    inset-block-start: 14px;
-    inset-inline-end: 14px;
-  }
-}
 
 #ai-view .ai-title-copy > p:first-child {
   display: none;
@@ -3481,6 +3435,12 @@ body:has(.travel-nav) .status {
 
 .ai-dictation-fallback {
   justify-self: start;
+}
+
+.ai-voice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 #ai-history-sheet .ai-history-note {
@@ -3715,7 +3675,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":13,"date":"2026-11-24","notes":["AI 记改为对话页，接口和自动记账选项移至设置，更新语音输入与账单问答。","行程增加日期切换、彩色分类时间线和可替换的旅行封面。","记账页简化顶部，显示实际支出、共同分担总数、实际分摊单人数额和分摊人数。"]}</script>
+  <script type="application/json" id="app-release">{"version":14,"date":"2026-11-24","notes":["行程和吃什么共用旅行封面，从右上角的旅行设置更换照片。","AI 记的麦克风默认直接识别语音，也可选用已配置的接口转写录音。","记账标题区合并四张彩色汇总卡，AA 结算和记一笔移到右上方。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -5055,7 +5015,6 @@ body:has(.travel-nav) .status {
 
     return Object.freeze({
       reset,
-      focus: () => pick.focus(),
       value: () => ({ original, photo, pending, changed: photo !== original })
     });
   }
@@ -5474,7 +5433,7 @@ body:has(.travel-nav) .status {
   const limits = {
     text: 4000, images: 4, frames: 12, imageTotalBytes: 3 * 1024 * 1024,
     context: 8000, recentActions: 12, actions: 32, replyBytes: 256 * 1024,
-    modelsBytes: 512 * 1024, errorBytes: 24 * 1024, maxCents: 99_999_999_999
+    modelsBytes: 512 * 1024, errorBytes: 24 * 1024, audioBytes: 5 * 1024 * 1024, maxCents: 99_999_999_999
   };
   const kindByMode = {itinerary: "itinerary", restaurants: "restaurant", ledger: "expense"};
   const fields = {
@@ -5493,12 +5452,22 @@ body:has(.travel-nav) .status {
   const claimsSaved = /已(?:经|成功|为[你您]|帮[你您]|给[你您]){0,3}(?:记账|入账|保存|记下)|(?:记账|入账|保存)(?:成功|完成|了)/u;
   const modelIdPattern = /^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,149}$/;
   const possibleSecret = /\b(?:sk-[A-Za-z0-9_-]{12,}|(?:Bearer\s+)[A-Za-z0-9._~-]{12,})/i;
+  const audioFormats = new Map([
+    ["audio/mp4", ["audio/mp4", "m4a"]], ["audio/m4a", ["audio/mp4", "m4a"]], ["audio/x-m4a", ["audio/mp4", "m4a"]],
+    ["audio/webm", ["audio/webm", "webm"]], ["audio/ogg", ["audio/ogg", "ogg"]],
+    ["audio/wav", ["audio/wav", "wav"]], ["audio/x-wav", ["audio/wav", "wav"]]
+  ]);
   const messages = {
     config: "请填写 HTTPS 接口地址和模型。地址不能包含账号、密码、参数或片段。",
     official: "OpenAI 官方密钥需要保存在服务端。请填写你自己的兼容接口地址。",
     key: "请检查 API 密钥。密钥不能写在地址、模型名称或发送内容里。",
     input: "请填写需要整理的文字或选好图片。内容过长时可以分批发送。",
     image: "请检查预览图片，最多 4 张 JPEG、PNG 或 WebP，分段后最多 12 段，合计不超过 3 MB。",
+    audio: "这段录音为空、太大或格式不受支持。请重新录一段较短的语音。",
+    audioModel: "请在设置中核对你要使用的语音转写模型名称。",
+    audioUnsupported: "接口没有提供这项语音转写服务，或不接受当前录音格式。请核对接口和转写模型。",
+    audioRejected: "接口拒绝了语音转写请求。请核对模型和设置，或试一段更短的录音。",
+    audioResponse: "这段录音没有得到可用的转写文字。请检查模型设置，或重新录一段。",
     auth: "接口拒绝了请求，请检查服务地址和密钥权限。",
     rate: "接口提示额度不足或请求过于频繁，请到你的服务账户查看。",
     network: "暂时连不上接口。请检查网络，以及接口是否允许本网页跨域请求。",
@@ -5595,15 +5564,20 @@ body:has(.travel-nav) .status {
     }
   }
 
-  async function rejectedRequest(response, imageRequest) {
+  async function rejectedRequest(response, imageRequest, audioRequest) {
     let data;
     try { data = await readJSON(response, limits.errorBytes); }
-    catch { return "requestRejected"; }
+    catch { return audioRequest ? "audioRejected" : "requestRejected"; }
     const details = data?.error ?? data;
     const markers = (typeof details === "string" ? [details] : [details?.code, details?.type, details?.param, details?.message])
       .filter((part) => typeof part === "string")
       .map((part) => part.slice(0, 800).toLowerCase().replaceAll("_", " "))
       .join(" ");
+    if (audioRequest) {
+      if (/model not found|invalid model|unsupported model|unknown model/u.test(markers)) return "audioModel";
+      if (/(?:audio|transcription|multipart).{0,80}(?:unsupported|not supported|not available)|(?:unsupported|not supported).{0,80}(?:audio|transcription|multipart)|不支持.{0,20}(?:音频|转写)/u.test(markers)) return "audioUnsupported";
+      return "audioRejected";
+    }
     if (/context length exceeded|maximum context|context window|too many (?:input )?tokens|上下文.{0,10}(?:过长|长度|上限)/u.test(markers)) return "context";
     if (/(?:response format|json object|json mode).{0,120}(?:not supported|unsupported|not available|invalid|not permitted)|(?:unsupported|invalid|does not support|not supported).{0,120}(?:response format|json object|json mode)|不支持.{0,30}(?:json|响应格式)/u.test(markers)) return "jsonUnsupported";
     if (!imageRequest) return "requestRejected";
@@ -5613,13 +5587,13 @@ body:has(.travel-nav) .status {
     return "requestRejected";
   }
 
-  async function fetchJSON({endpoint, key, body, signal, timeoutMs, maxBytes, imageRequest = false}) {
+  async function fetchJSON({endpoint, key, body, signal, timeoutMs, maxBytes, imageRequest = false, audioRequest = false}) {
     if (signal?.aborted) throw error("cancelled");
     const controller = new AbortController();
     const abort = () => controller.abort();
     const headers = {Accept: "application/json"};
     if (key) headers.Authorization = `Bearer ${key}`;
-    if (body !== undefined) headers["Content-Type"] = "application/json";
+    if (typeof body === "string") headers["Content-Type"] = "application/json";
     let timedOut = false;
     const timer = setTimeout(() => {
       timedOut = true;
@@ -5637,10 +5611,12 @@ body:has(.travel-nav) .status {
         throw error("network");
       }
       if (!response.ok) {
-        if ([400, 422].includes(response.status)) throw error(await rejectedRequest(response, imageRequest));
+        if ([400, 422].includes(response.status)) throw error(await rejectedRequest(response, imageRequest, audioRequest));
         void response.body?.cancel().catch(() => {});
         if ([401, 403].includes(response.status)) throw error("auth");
         if ([402, 429].includes(response.status)) throw error("rate");
+        if (audioRequest && [404, 405, 415].includes(response.status)) throw error("audioUnsupported");
+        if (audioRequest && response.status === 413) throw error("audio");
         if (response.status === 413) throw error("payload");
         if (response.status === 415 && imageRequest) throw error("imageContent");
         if ([408, 504].includes(response.status)) throw error("gatewayTimeout");
@@ -5684,6 +5660,33 @@ body:has(.travel-nav) .status {
     const message = data?.choices?.[0]?.message;
     if (message?.refusal || message?.tool_calls?.length || typeof message?.content !== "string"
       || !message.content.trim() || secretIn(message.content, key)) throw error("response");
+  }
+
+  async function transcribe(config, {audio, model} = {}, signal) {
+    if (!credentials.has(config)) throw error("config");
+    const key = credentials.get(config);
+    const selected = typeof model === "string" ? model.trim() : "";
+    if (!modelIdPattern.test(selected) || secretIn(selected, key)) throw error("audioModel");
+    if (!(audio instanceof Blob) || !audio.size || audio.size >= limits.audioBytes) throw error("audio");
+    const format = audioFormats.get(audio.type.split(";")[0].trim().toLowerCase());
+    if (!format) throw error("audio");
+
+    const [mime, extension] = format;
+    const body = new FormData();
+    body.append("file", audio.slice(0, audio.size, mime), `recording.${extension}`);
+    body.append("model", selected);
+    body.append("language", "zh");
+    const endpoint = new URL(`${config.baseUrl}/audio/transcriptions`).href;
+    try {
+      const result = await fetchJSON({endpoint, key, body, signal, audioRequest: true,
+        timeoutMs: 45000, maxBytes: limits.errorBytes});
+      const transcript = !result?.error && textField(result?.text, limits.text, key);
+      if (!transcript) throw error("audioResponse");
+      return transcript;
+    } catch (failure) {
+      if (failure?.code === "response") throw error("audioResponse");
+      throw failure;
+    }
   }
 
   function newDate(value) {
@@ -6098,7 +6101,7 @@ body:has(.travel-nav) .status {
     });
   }
 
-  globalThis.TravelAIClient = Object.freeze({configure, models, probe, probeImage, request});
+  globalThis.TravelAIClient = Object.freeze({configure, models, probe, probeImage, request, transcribe});
 })();
 
 ;
@@ -7128,6 +7131,7 @@ body:has(.travel-nav) .status {
   const autoRecordKey = "go-travel-ai-auto-record-v1";
   const modeKey = "go-travel-ai-mode-v1";
   const voiceKey = "go-travel-ai-voice-v1";
+  const transcriptionKey = "go-travel-ai-transcription-model-v1";
   const appleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent)
     || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const imageLabels = {
@@ -7142,6 +7146,7 @@ body:has(.travel-nav) .status {
   let connectionGeneration = 0;
   let request;
   let recognition;
+  let recording;
   let preparing = false;
   let viewportFrame = 0;
   let viewportSettleTimer;
@@ -7159,9 +7164,8 @@ body:has(.travel-nav) .status {
 
   const rememberedMode = preference(modeKey);
   let preferredMode = Object.hasOwn(descriptions, rememberedMode) ? rememberedMode : "auto";
-  const rememberedVoice = preference(voiceKey);
-  let preferredVoice = ["system", "browser"].includes(rememberedVoice) ? rememberedVoice
-    : appleMobile || navigator.standalone ? "system" : "browser";
+  let preferredVoice = preference(voiceKey) === "provider" ? "provider" : "browser";
+  let transcriptionModel = (preference(transcriptionKey) || "").slice(0, 150);
 
   if (autoRecord) {
     try { autoRecord.checked = localStorage.getItem(autoRecordKey) !== "off"; }
@@ -7448,12 +7452,33 @@ body:has(.travel-nav) .status {
   addText(voiceLabel, "", "语音输入方式", "span");
   const voiceSelect = addText(voiceLabel, "", "", "select");
   voiceSelect.id = "ai-voice-method";
-  voiceSelect.append(new Option("系统键盘听写", "system"), new Option("浏览器语音识别（兼容模式）", "browser"));
+  voiceSelect.append(new Option("浏览器直接语音识别", "browser"), new Option("使用已配置接口转写（按需）", "provider"));
   voiceSelect.value = preferredVoice;
-  addText(options, "hint", "iPhone 如未显示键盘麦克风，可在「设置 → 通用 → 键盘」开启听写。核对文字后再发送。");
+  addText(options, "hint", "聊天里的麦克风可直接转成文字。iPhone 上请允许 Safari 使用麦克风，并打开 Siri。");
+  const modelLabel = addText(options, "field ai-voice-setting", "", "label");
+  addText(modelLabel, "", "语音转写模型", "span");
+  const voiceModel = addText(modelLabel, "", "", "input");
+  voiceModel.type = "text";
+  voiceModel.id = "ai-transcribe-model";
+  voiceModel.maxLength = 150;
+  voiceModel.autocomplete = "off";
+  voiceModel.spellcheck = false;
+  voiceModel.placeholder = "你的接口提供的转写模型 ID";
+  voiceModel.value = transcriptionModel;
+  const voicePrivacy = addText(options, "hint", "只使用你的当前接口。发送录音前会显示地址并请你确认，接口可能按量计费。转写结果可修改，录音只在本次操作中保留。");
+  const syncVoiceSettings = () => {
+    modelLabel.hidden = preferredVoice !== "provider";
+    voicePrivacy.hidden = preferredVoice !== "provider";
+  };
+  syncVoiceSettings();
   voiceSelect.addEventListener("change", () => {
     preferredVoice = voiceSelect.value;
     remember(voiceKey, preferredVoice);
+    syncVoiceSettings();
+  });
+  voiceModel.addEventListener("input", () => {
+    transcriptionModel = voiceModel.value.trim();
+    remember(transcriptionKey, transcriptionModel);
   });
   const payloadDetails = addText(options, "ai-payload-preview", "", "details");
   payloadDetails.id = "ai-payload-details";
@@ -7484,10 +7509,11 @@ body:has(.travel-nav) .status {
 
   function sync() {
     const busy = Boolean(request) || preparing;
-    get("ai-send").disabled = busy || Boolean(recognition) || (!text.value.trim() && !active?.images.length);
-    get("ai-add-image").disabled = busy || active?.images.length >= maxImages;
+    const voiceBusy = Boolean(recognition || recording);
+    get("ai-send").disabled = busy || voiceBusy || (!text.value.trim() && !active?.images.length);
+    get("ai-add-image").disabled = busy || voiceBusy || active?.images.length >= maxImages;
     get("ai-add-image").title = inputMode === "text" ? "在接口设置切换到文字和图片" : "";
-    get("ai-speech").disabled = busy;
+    get("ai-speech").disabled = busy || Boolean(recording && recording.phase !== "recording");
     text.readOnly = busy;
     get("ai-cancel-send").hidden = !request;
     for (const button of attachments.querySelectorAll("button")) button.disabled = busy;
@@ -7496,16 +7522,31 @@ body:has(.travel-nav) .status {
   }
 
   const voice = get("ai-speech");
+  const composer = get("ai-composer");
+  const voiceActions = addText(composer, "ai-voice-actions", "", "div");
+  get("ai-dictation").after(voiceActions);
   const keyboardButton = document.createElement("button");
   keyboardButton.type = "button";
   keyboardButton.className = "button quiet ai-dictation-fallback";
   keyboardButton.textContent = "打开键盘听写";
   keyboardButton.hidden = true;
-  get("ai-dictation").after(keyboardButton);
+  voiceActions.append(keyboardButton);
+  const transcribeButton = addText(voiceActions, "button tonal", "发送录音转写", "button");
+  transcribeButton.type = "button";
+  transcribeButton.id = "ai-transcribe-audio";
+  transcribeButton.hidden = true;
+  const discardButton = addText(voiceActions, "button quiet", "放弃录音", "button");
+  discardButton.type = "button";
+  discardButton.id = "ai-discard-audio";
+  discardButton.hidden = true;
+  voiceActions.hidden = true;
 
   function updateDictation(message = "", showFallback = false) {
     const followLatest = nearLatest();
     keyboardButton.hidden = !showFallback;
+    transcribeButton.hidden = recording?.phase !== "ready";
+    discardButton.hidden = !recording;
+    voiceActions.hidden = keyboardButton.hidden && transcribeButton.hidden && discardButton.hidden;
     status("ai-dictation", message);
     if (followLatest) messages.scrollTop = messages.scrollHeight;
   }
@@ -7517,6 +7558,7 @@ body:has(.travel-nav) .status {
       clearTimeout(take.timer);
       try { take.engine.abort(); } catch { /* Recognition has already stopped. */ }
     }
+    discardRecording();
     voice.setAttribute("aria-label", "语音输入");
     voice.setAttribute("aria-pressed", "false");
     updateDictation();
@@ -7536,65 +7578,223 @@ body:has(.travel-nav) .status {
     sync();
   }
 
+  function fillSpeech(result, message, showFallback = false) {
+    const next = [text.value, result].filter(Boolean).join("\n");
+    const max = text.maxLength;
+    text.value = max > 0 ? next.slice(0, max) : next;
+    active.text = text.value;
+    updateDictation(max > 0 && next.length > max ? "输入已达长度上限，请核对已填入的文字。" : message, showFallback);
+    sync();
+  }
+
   function finishSpeech(take, message) {
     if (recognition !== take) return;
     stopSpeech();
     if (active !== take.conversation || !host) return;
-    if (!take.result) return speechFallback(message || "暂未收到语音文字，可以改用系统键盘听写。");
-    const next = [text.value, take.result].filter(Boolean).join("\n");
-    const max = text.maxLength;
-    text.value = max > 0 ? next.slice(0, max) : next;
-    active.text = text.value;
-    updateDictation(max > 0 && next.length > max
-      ? "输入已达长度上限，请核对已填入的文字。" : "听写已填入，可以修改后发送。");
-    sync();
+    if (take.final) return fillSpeech(take.final, "听写已填入，可以修改后发送。");
+    if (take.interim) return fillSpeech(take.interim, "识别尚未完成，已保留收到的文字，请核对。", true);
+    speechFallback(message || "暂未收到语音文字，可再点麦克风重试。");
+  }
+
+  function speechUnavailable(message) {
+    if (!appleMobile) return message;
+    return navigator.standalone || matchMedia("(display-mode: standalone)").matches
+      ? `${message} 可用 Safari 打开网页再试。`
+      : `${message} 请检查 Siri 和 Safari 的麦克风权限。`;
+  }
+
+  function speechError(code) {
+    const messages = {
+      "not-allowed": "麦克风或语音识别权限未开启。",
+      "service-not-allowed": "当前浏览器无法使用语音识别服务。",
+      "audio-capture": "暂时无法使用麦克风。请检查权限或关闭正在占用麦克风的应用。",
+      "language-not-supported": "当前语音服务不支持中文听写。",
+      "no-speech": "未检测到清晰语音。可再点麦克风重试。",
+      network: "语音识别连接失败，请检查网络后重试。",
+      aborted: "语音识别已中断。可再点麦克风重试。"
+    };
+    const message = Object.hasOwn(messages, code) ? messages[code] : "浏览器未能完成本次语音识别。";
+    return ["not-allowed", "service-not-allowed"].includes(code) ? speechUnavailable(message) : message;
   }
 
   keyboardButton.addEventListener("click", keyboardDictation);
   voice.addEventListener("click", () => {
     if (!active?.trip || request || preparing) return;
+    if (preferredVoice === "provider") return void recordForProvider();
     if (recognition) {
       const take = recognition;
       clearTimeout(take.timer);
+      updateDictation("正在完成听写…");
       take.timer = setTimeout(() => finishSpeech(take), 3000);
       try { take.engine.stop(); } catch { finishSpeech(take); }
       return;
     }
-    const Speech = globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition;
-    if (preferredVoice === "system" || !Speech) return keyboardDictation();
+    const Speech = [globalThis.SpeechRecognition, globalThis.webkitSpeechRecognition].find((type) => typeof type === "function");
+    if (!Speech) return speechFallback(speechUnavailable("当前页面无法直接语音识别。"));
     let take;
     try {
       const engine = new Speech();
-      take = {engine, conversation: active, result: ""};
+      take = {engine, conversation: active, final: "", interim: "", started: false};
       recognition = take;
       engine.lang = "zh-CN";
       engine.continuous = false;
-      engine.interimResults = false;
-      engine.onstart = () => {
-        if (recognition !== take) return;
+      engine.interimResults = true;
+      const startHearing = () => {
+        if (recognition !== take || take.started) return;
+        take.started = true;
         clearTimeout(take.timer);
-        take.timer = setTimeout(() => finishSpeech(take, "浏览器没有返回文字，请改用系统键盘听写。"), 20000);
-        updateDictation("正在听写，再点一次结束。转写后请先核对文字。");
+        take.timer = setTimeout(() => finishSpeech(take, speechUnavailable("语音服务没有返回文字。")), 20000);
+        updateDictation("正在听写，再点一次结束。");
       };
+      engine.onstart = startHearing;
+      engine.onaudiostart = startHearing;
       engine.onresult = (event) => {
         if (recognition !== take) return;
-        take.result = Array.from(event.results || []).filter((result) => result.isFinal)
+        const results = Array.from(event.results || []);
+        const read = (isFinal) => results.filter((result) => Boolean(result.isFinal) === isFinal)
           .map((result) => result[0]?.transcript || "").join("").trim();
+        take.final = read(true);
+        take.interim = read(false) || take.interim;
+        if (take.final) finishSpeech(take);
       };
-      engine.onerror = ({error}) => finishSpeech(take, ["not-allowed", "service-not-allowed"].includes(error)
-        ? "浏览器未能获得语音权限。可以检查权限，或使用系统键盘听写。"
-        : "浏览器未能完成语音识别，可以改用系统键盘听写。");
+      engine.onerror = ({error}) => finishSpeech(take, speechError(error));
       engine.onend = () => finishSpeech(take);
       voice.setAttribute("aria-label", "停止听写");
       voice.setAttribute("aria-pressed", "true");
       updateDictation("正在启动听写…");
-      take.timer = setTimeout(() => finishSpeech(take, "浏览器未能启动语音识别，可以改用系统键盘听写。"), 8000);
+      take.timer = setTimeout(() => finishSpeech(take, speechUnavailable("浏览器未能启动语音识别。")), 15000);
       sync();
       engine.start();
     } catch {
-      if (take) finishSpeech(take, "浏览器未能启动语音识别，可以改用系统键盘听写。");
-      else speechFallback("浏览器未能启动语音识别，可以改用系统键盘听写。");
+      const message = speechUnavailable("浏览器未能启动语音识别。");
+      if (take) finishSpeech(take, message);
+      else speechFallback(message);
     }
+  });
+
+  const maxRecordingBytes = 5 * 1024 * 1024;
+
+  function releaseMicrophone(take) {
+    for (const track of take.stream?.getTracks() || []) track.stop();
+    take.stream = undefined;
+  }
+
+  function discardRecording() {
+    const take = recording;
+    recording = undefined;
+    if (!take) return;
+    clearTimeout(take.timer);
+    take.controller?.abort();
+    if (take.recorder?.state === "recording") {
+      try { take.recorder.stop(); } catch { /* The microphone is released below. */ }
+    }
+    releaseMicrophone(take);
+  }
+
+  function recorderFailure(take, message) {
+    if (recording !== take) return;
+    stopSpeech();
+    speechFallback(message);
+  }
+
+  function stopRecording(take) {
+    if (recording !== take || take.phase !== "recording") return;
+    take.phase = "finishing";
+    clearTimeout(take.timer);
+    updateDictation("正在结束录音…");
+    sync();
+    take.timer = setTimeout(() => recorderFailure(take, "没有收到录音文件，可重新录音。"), 4000);
+    try { take.recorder.stop(); } catch { recorderFailure(take, "录音未能完成，可重新录音。"); }
+  }
+
+  async function recordForProvider() {
+    if (recording) return stopRecording(recording);
+    if (!config || !/^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,149}$/.test(transcriptionModel)) {
+      return speechFallback("先在设置保存 AI 接口，并填写该接口的转写模型。");
+    }
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder !== "function") {
+      return speechFallback(speechUnavailable("当前页面无法录音。"));
+    }
+    const take = {conversation: active, config, model: transcriptionModel, phase: "permission", chunks: [], bytes: 0};
+    recording = take;
+    updateDictation("正在请求麦克风权限…");
+    sync();
+    try {
+      take.stream = await navigator.mediaDevices.getUserMedia({audio: true});
+      if (recording !== take || active !== take.conversation || !host) return releaseMicrophone(take);
+      const mime = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"]
+        .find((type) => MediaRecorder.isTypeSupported?.(type));
+      const engine = mime ? new MediaRecorder(take.stream, {mimeType: mime}) : new MediaRecorder(take.stream);
+      take.recorder = engine;
+      engine.ondataavailable = ({data}) => {
+        if (recording !== take || !data?.size) return;
+        take.bytes += data.size;
+        if (take.bytes >= maxRecordingBytes) return recorderFailure(take, "录音文件过大，请缩短后重录。");
+        take.chunks.push(data);
+      };
+      engine.onerror = () => recorderFailure(take, "录音未能完成，可重新录音。");
+      engine.onstop = () => {
+        releaseMicrophone(take);
+        if (recording !== take) return;
+        clearTimeout(take.timer);
+        const format = engine.mimeType || take.chunks[0]?.type;
+        if (!take.bytes || !format) return recorderFailure(take, "没有收到有效录音，可重新录音。");
+        take.clip = new Blob(take.chunks, {type: format});
+        take.chunks = [];
+        take.phase = "ready";
+        voice.setAttribute("aria-label", "语音输入");
+        voice.setAttribute("aria-pressed", "false");
+        updateDictation("录音已完成。可以发送给当前接口转写，或放弃录音。");
+        sync();
+      };
+      engine.start(250);
+      take.phase = "recording";
+      voice.setAttribute("aria-label", "停止录音");
+      voice.setAttribute("aria-pressed", "true");
+      updateDictation("正在录音，再点一次结束。最长 30 秒。");
+      take.timer = setTimeout(() => stopRecording(take), 30000);
+      sync();
+    } catch (error) {
+      const denied = ["NotAllowedError", "SecurityError"].includes(error?.name);
+      recorderFailure(take, speechUnavailable(denied ? "麦克风权限未开启。" : "暂时无法启动录音。"));
+    }
+  }
+
+  discardButton.addEventListener("click", () => {
+    const sent = recording?.phase === "transcribing";
+    stopSpeech();
+    updateDictation(sent ? "已停止等待。已发出的录音仍可能由接口处理并计费。" : "已放弃这段录音。");
+    sync();
+  });
+
+  transcribeButton.addEventListener("click", async () => {
+    const take = recording;
+    if (take?.phase !== "ready" || active !== take.conversation || take.config !== config) return;
+    const target = new URL(take.config.endpoint).hostname;
+    if (!confirm(`把本次录音发送到 ${target} 转写成文字？接口可能产生费用。`)) return;
+    take.phase = "transcribing";
+    take.controller = new AbortController();
+    updateDictation("正在转写录音…");
+    sync();
+    try {
+      const result = await client.transcribe(take.config, {audio: take.clip, model: take.model}, take.controller.signal);
+      if (recording !== take || active !== take.conversation || !host || take.config !== config) return;
+      stopSpeech();
+      fillSpeech(result, "转写已填入，可以修改后发送。");
+    } catch (error) {
+      if (recording !== take) return;
+      take.phase = "ready";
+      updateDictation(error.message || "转写未完成，可以重试或放弃录音。");
+      sync();
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && recording?.phase === "recording") stopRecording(recording);
+  });
+  window.addEventListener("pagehide", () => {
+    stopSpeech();
+    sync();
   });
 
   get("ai-add-image").addEventListener("click", () => {
@@ -7705,7 +7905,6 @@ body:has(.travel-nav) .status {
       conversation.text = "";
       conversation.images = [];
       text.value = "";
-      if (conversation.oneShotMode) selectMode(preferredMode);
     }
     persist(conversation);
     renderConversation({preserveScroll: true});
@@ -7715,7 +7914,7 @@ body:has(.travel-nav) .status {
 
   get("ai-composer").addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (request || preparing || recognition || !active?.trip) return;
+    if (request || preparing || recognition || recording || !active?.trip) return;
     const input = text.value.trim();
     if (!input && !active.images.length) return;
     const conversation = active;
@@ -7809,7 +8008,7 @@ body:has(.travel-nav) .status {
 
   text.addEventListener("input", () => {
     active.text = text.value;
-    if (!recognition && keyboardButton.hidden) updateDictation();
+    if (!recognition && !recording && keyboardButton.hidden) updateDictation();
     sync();
   });
 
@@ -7989,21 +8188,11 @@ body:has(.travel-nav) .status {
     text.placeholder = mode === "auto" ? "输入消息…" : `输入消息，整理${descriptions[mode][1]}…`;
   }
 
-  function selectMode(mode, {once = false} = {}) {
-    if (!active?.trip || !Object.hasOwn(descriptions, mode)) return;
-    active.mode = mode;
-    active.oneShotMode = once;
-    updateModeLabel();
-    if (!active.history.length) renderConversation();
-    syncPayload();
-  }
-
   modeSelect.addEventListener("change", () => {
     preferredMode = modeSelect.value;
     remember(modeKey, preferredMode);
     for (const conversation of sessions.values()) {
       conversation.mode = preferredMode;
-      conversation.oneShotMode = false;
     }
     updateModeLabel();
     syncPayload();
@@ -8032,7 +8221,7 @@ body:has(.travel-nav) .status {
 
   parking.append(settings, options);
   historySheet.insertBefore(get("ai-history-note"), get("ai-history-list"));
-  globalThis.TravelAI = Object.freeze({ mount, unmount, selectMode, mountSettings, unmountSettings, showSettings });
+  globalThis.TravelAI = Object.freeze({ mount, unmount, mountSettings, unmountSettings, showSettings });
 })();
 
 ;
@@ -8270,7 +8459,7 @@ body:has(.travel-nav) .status {
     const cards = [
       ["tone-total", "钱包", "实际支出", money(totalCents), ""],
       ["tone-shared", "分摊", "共同分担总数", money(sharedCents), ""],
-      ["tone-average", "人均", "实际分摊单人数额", perPerson, varied ? "按各笔实际分摊" : ""],
+      ["tone-average", "人均", "单人分担数额", perPerson, varied ? "按各笔实际分摊" : ""],
       ["tone-count", "同行", "分摊人数", `${shares.length} 人`, ""]
     ];
     return `<section class="trip-overview" aria-label="全程账本概览">
@@ -8451,21 +8640,22 @@ body:has(.travel-nav) .status {
       ...(trip.restaurants || []).map((item) => item.city)
     ].filter(Boolean))];
     const route = readLink(trip.link);
-    const isLedger = activeView === "ledger";
-    const dateRange = isLedger ? "" : formatTripDates(trip);
+    const heroCopy = `<div class="hero-copy">
+      ${trip.isDemo ? '<p class="hero-kicker">示例旅行</p>' : ""}
+      <h1>${escapeHtml(trip.name)}</h1>
+      <p class="hero-meta">${trip.members.length} 人同行${heroPlaces.length ? ` <span aria-hidden="true">·</span> ${heroPlaces.length} 个地点` : ""}</p>
+    </div>`;
+    if (activeView === "ledger") {
+      content.innerHTML = ledgerMarkup(trip, route, heroCopy) + navigationMarkup();
+      return;
+    }
+    const dateRange = formatTripDates(trip);
     const hero = `<section class="hero travel-hero" data-view="${activeView}">
-      ${activeView === "itinerary" ? coverMarkup(trip.coverPhoto) : ""}
+      ${coverMarkup(trip.coverPhoto)}
       <div class="hero-inner">
-        <div class="hero-copy">
-          ${trip.isDemo ? '<p class="hero-kicker">示例旅行</p>' : ""}
-          <h1>${escapeHtml(trip.name)}</h1>
-          <p class="hero-meta">${trip.members.length} 人同行${heroPlaces.length ? ` <span aria-hidden="true">·</span> ${heroPlaces.length} 个地点` : ""}</p>
-        </div>
+        ${heroCopy}
         <div class="hero-context">
-          ${activeView === "itinerary" ? '<button type="button" class="button tonal cover-edit-button" data-action="edit-cover">更换封面</button>' : ""}
-          ${isLedger ? "" : '<button type="button" class="button tonal" data-action="edit-trip">旅行设置</button><button type="button" class="button tonal ai-entry-button" data-action="open-ai">AI记账</button>'}
-          ${isLedger ? "" : '<button type="button" class="button primary" data-action="new-expense">＋ 记一笔</button>'}
-          ${isLedger ? '<div class="hero-actions desktop-actions"><button type="button" class="button primary" data-action="new-expense">＋ 记一笔</button><button type="button" class="button tonal" data-action="settle">AA 结算</button></div>' : ""}
+          <button type="button" class="button tonal hero-settings-button" data-action="edit-trip">旅行设置</button>
         </div>
       </div>
       ${dateRange ? `<span class="trip-date-range">${dateRange}</span>` : ""}
@@ -8473,13 +8663,12 @@ body:has(.travel-nav) .status {
     const page = {
       itinerary: () => globalThis.TravelItinerary.render(trip, viewContext)
         + (route ? `<div class="existing-plan-link"><a class="button tonal" href="${escapeHtml(route)}" target="_blank" rel="noopener noreferrer">打开外部行程</a></div>` : ""),
-      restaurants: () => globalThis.TravelRestaurants.render(trip, viewContext),
-      ledger: () => ledgerMarkup(trip, route)
+      restaurants: () => globalThis.TravelRestaurants.render(trip, viewContext)
     };
     content.innerHTML = hero + page[activeView]() + navigationMarkup();
   }
 
-  function ledgerMarkup(trip, route) {
+  function ledgerMarkup(trip, route, heroCopy) {
     let summary;
     try {
       summary = summarize(trip);
@@ -8491,7 +8680,18 @@ body:has(.travel-nav) .status {
     if (!usedCategories.includes(categoriesFilter)) categoriesFilter = "";
     const visibleExpenses = categoriesFilter
       ? trip.expenses.filter(({category}) => category === categoriesFilter) : trip.expenses;
-    return `${overviewMarkup(summary)}
+    return `<section class="hero travel-hero" data-view="ledger">
+      <div class="hero-inner">
+        ${heroCopy}
+        <div class="hero-context">
+          <div class="hero-actions ledger-hero-actions">
+            <button type="button" class="button tonal" data-action="settle">AA 结算</button>
+            <button type="button" class="button primary" data-action="new-expense">＋ 记一笔</button>
+          </div>
+        </div>
+      </div>
+      ${overviewMarkup(summary)}
+    </section>
     <div class="workspace">
       <section class="ledger-panel" aria-labelledby="ledger-title">
         <header class="ledger-heading">
@@ -8515,10 +8715,6 @@ body:has(.travel-nav) .status {
           ${route ? `<a class="button tonal itinerary-link" href="${escapeHtml(route)}" target="_blank" rel="noopener noreferrer">打开行程</a>` : ""}
         </section>
       </div>
-    </div>
-    <div class="action-dock">
-      <button type="button" class="button tonal" data-action="settle">AA 结算</button>
-      <button type="button" class="button primary" data-action="new-expense">＋ 记一笔</button>
     </div>`;
   }
 
@@ -8533,7 +8729,7 @@ body:has(.travel-nav) .status {
     </section>`;
   }
 
-  function openTripForm(trip, { editCover = false } = {}) {
+  function openTripForm(trip) {
     tripFormId = trip?.id || null;
     tripFormDates = { startDate: trip?.startDate || "", endDate: trip?.endDate || "" };
     $("trip-form").reset();
@@ -8552,8 +8748,7 @@ body:has(.travel-nav) .status {
     setMessage($("trip-error"));
     tripSheet.dataset.dirty = "";
     tripSheet.showModal();
-    if (editCover) coverEditor.focus();
-    else $("trip-name").focus();
+    if (!trip) $("trip-name").focus();
   }
 
   function saveTrip(event) {
@@ -9067,14 +9262,6 @@ body:has(.travel-nav) .status {
       place: aiText(action.place)}, {fromAI: true, onSaved});
   }
 
-  function openAI() {
-    const mode = activeView;
-    setView("ai");
-    if (["itinerary", "restaurants", "ledger"].includes(mode)) {
-      globalThis.TravelAI.selectMode(mode, {once: true});
-    }
-  }
-
   function handleAction(button) {
     const trip = getTrip() || state.trips[0];
     const action = button.dataset.action;
@@ -9086,8 +9273,6 @@ body:has(.travel-nav) .status {
       case "switch": return openSwitch();
       case "select-trip": return selectTrip(button.dataset.id);
       case "edit-trip": if (trip) openTripForm(trip); return;
-      case "edit-cover": if (trip) openTripForm(trip, { editCover: true }); return;
-      case "open-ai": return openAI();
       case "settings-export": if (trip?.expenses.length) exportSettlement(trip); return;
       case "settings-copy": if (trip?.expenses.length) void copySettlement(trip, true); return;
       case "settings-backup": {
