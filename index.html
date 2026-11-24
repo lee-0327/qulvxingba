@@ -3210,7 +3210,7 @@ body:has(.travel-nav) .status {
 
 .plan-timed:has(+ .plan-timed) > .plan-marker::after {
   inset-block-end: calc(-1 * (var(--plan-marker-y) + var(--plan-row-gap)));
-  width: 2px;
+  width: 1px;
   background: #d28d7e;
 }
 
@@ -4430,7 +4430,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":17,"date":"2026-11-24","notes":["恢复同一天行程红点之间的竖线，时间和红点继续分列显示。"]}</script>
+  <script type="application/json" id="app-release">{"version":18,"date":"2026-11-24","notes":["行程时间线的红色竖线调细为 1 像素。"]}</script>
   <script>
 (() => {
   'use strict';
