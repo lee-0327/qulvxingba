@@ -3465,6 +3465,740 @@ body:has(.travel-nav) .status {
   padding-top: 8px;
 }
 
+.travel-hero[data-view="ledger"] > .trip-overview {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block-end: 10px;
+}
+
+.ledger-hero-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin-inline: var(--ledger-hero-inset);
+  padding: 4px 0 6px;
+  border-top: 1px solid var(--line);
+}
+
+.ledger-hero-footer .hint {
+  font-size: 12px;
+}
+
+.ledger-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-inline-start: auto;
+}
+
+.ledger-detail-actions > .button {
+  min-height: var(--touch);
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.ledger-stack {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.ledger-participants {
+  min-width: 0;
+  padding: clamp(14px, 2.4vw, 21px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.ledger-participants h2 {
+  margin-bottom: 12px;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.ledger-participant-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 10px 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ledger-participant {
+  display: grid;
+  width: 56px;
+  justify-items: center;
+  gap: 5px;
+  color: var(--ink);
+  font-size: 13px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.ledger-avatar {
+  display: grid;
+  width: 37px;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--category-tint, var(--neutral-soft));
+  color: var(--category-ink, var(--muted));
+  font-size: 15px;
+  font-weight: 680;
+  line-height: 1;
+}
+
+.expense-copy strong {
+  font-size: 14px;
+}
+
+.expense-copy small {
+  font-size: 12px;
+}
+
+.expense-amount {
+  font-size: 16px;
+}
+
+@media (max-width: 560px) {
+  .travel-hero[data-view="ledger"] > .trip-overview {
+    gap: 6px;
+  }
+
+  .travel-hero[data-view="ledger"] .overview-card {
+    padding: 8px 6px;
+  }
+
+  .travel-hero[data-view="ledger"] .overview-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 4px;
+  }
+
+  .travel-hero[data-view="ledger"] .overview-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+  }
+
+  .travel-hero[data-view="ledger"] .overview-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .travel-hero[data-view="ledger"] .overview-label {
+    font-size: 11px;
+  }
+
+  .travel-hero[data-view="ledger"] .overview-value {
+    margin-top: 2px;
+    font-size: clamp(13px, 4.15vw, 22px);
+    letter-spacing: -.035em;
+  }
+}
+
+#settlement-sheet {
+  scroll-padding-block: 72px 76px;
+}
+
+#settlement-body {
+  gap: 16px;
+  background: var(--paper);
+}
+
+.settlement-top,
+.settlement-block {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: var(--surface);
+}
+
+.settlement-top {
+  display: grid;
+  gap: 11px;
+}
+
+.settlement-trip,
+.settlement-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.settlement-trip h3 {
+  min-width: 0;
+  font-size: clamp(18px, 4vw, 21px);
+  overflow-wrap: anywhere;
+}
+
+.settlement-trip p,
+.settlement-title-row > span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.settlement-modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--neutral-soft);
+}
+
+.settlement-modes .button {
+  min-width: 0;
+  border-radius: 8px;
+  white-space: normal;
+}
+
+.settlement-modes .button[aria-pressed="true"] {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.settlement-totals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.settlement-totals > div {
+  min-width: 0;
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.settlement-totals dt {
+  font-size: 12px;
+}
+
+.settlement-totals dd {
+  font-size: clamp(15px, 4vw, 19px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.settlement-transfers {
+  margin-top: 5px;
+}
+
+#settlement-body .transfer-row {
+  display: grid;
+  min-height: 51px;
+  grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr) minmax(0, auto);
+  gap: 5px 8px;
+  padding-inline: 0;
+}
+
+.settlement-party {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.3;
+}
+
+.settlement-party > strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.settlement-avatar {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.settlement-avatar::before {
+  content: attr(data-initial);
+}
+
+.settlement-sender .settlement-avatar,
+.settlement-member[data-balance="send"] .settlement-avatar {
+  background: #f6e7db;
+  color: #824d3c;
+}
+
+.settlement-direction {
+  color: var(--muted);
+}
+
+.settlement-direction svg {
+  width: 18px;
+  height: 18px;
+}
+
+.settlement-transfer-amount {
+  max-width: 16ch;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.settlement-members {
+  display: grid;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.settlement-member {
+  min-width: 0;
+  padding: 9px 11px 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.settlement-member-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.settlement-member-title {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+}
+
+.settlement-member-title h4 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.settlement-member-title p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.settlement-net {
+  max-width: min(44%, 16ch);
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--neutral-soft);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  text-align: end;
+}
+
+.settlement-member[data-balance="receive"] .settlement-net {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.settlement-member[data-balance="send"] .settlement-net {
+  background: #f6e7db;
+  color: #824d3c;
+}
+
+.settlement-person {
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+}
+
+.settlement-person > summary {
+  display: grid;
+  min-height: var(--touch);
+  grid-template-columns: 1fr auto 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 650;
+  list-style: none;
+}
+
+.settlement-person > summary > span {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.settlement-person > summary::-webkit-details-marker {
+  display: none;
+}
+
+.settlement-person > summary::after {
+  width: 7px;
+  height: 7px;
+  justify-self: center;
+  transform: rotate(45deg);
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  content: "";
+}
+
+.settlement-person[open] > summary::after {
+  transform: rotate(225deg);
+}
+
+.settlement-person-body {
+  display: grid;
+  gap: 5px;
+  padding: 6px 0 9px;
+  border-top: 1px solid var(--line);
+}
+
+.settlement-person-body h5 {
+  margin: 3px 0 0;
+  font-size: 13px;
+}
+
+.settlement-person-transfers,
+.settlement-person-expenses {
+  padding: 0;
+  list-style: none;
+}
+
+.settlement-person-transfers > li,
+.settlement-person-expenses > li {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 5px 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.settlement-person-expenses > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.settlement-person-expenses dl {
+  min-width: 31%;
+  text-align: end;
+}
+
+.settlement-person-expenses dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 3px 5px;
+}
+
+.settlement-person-expenses dt {
+  color: var(--muted);
+}
+
+.settlement-person-expenses dd {
+  font-weight: 650;
+}
+
+.settlement-bottom {
+  justify-self: center;
+}
+
+@media (max-width: 400px) {
+  #settlement-body {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+
+  .settlement-top, .settlement-block {
+    padding: 10px;
+  }
+
+  #settlement-body .transfer-row {
+    grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr) minmax(0, auto);
+    column-gap: 5px;
+    font-size: 13px;
+  }
+
+  .settlement-direction svg {
+    width: 14px;
+  }
+
+  .settlement-party {
+    gap: 4px;
+  }
+
+  .settlement-party .settlement-avatar {
+    width: 23px;
+    height: 23px;
+    font-size: 11px;
+  }
+}
+
+.spending-stats {
+  max-width: 920px;
+  margin-inline: auto;
+}
+
+.spending-heading {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+
+.spending-heading h1 {
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 650;
+}
+
+.spending-back {
+  justify-self: start;
+  padding-inline: 0 10px;
+}
+
+.spending-back > span {
+  color: var(--accent);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.spending-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.spending-panel {
+  min-width: 0;
+  padding: clamp(14px, 3vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.spending-panel h2 {
+  margin-bottom: 4px;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.spending-ring-chart {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: min(232px, 100%);
+  aspect-ratio: 1;
+  place-items: center;
+  margin: 14px auto;
+}
+
+.spending-ring,
+.spending-ring-slice {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.spending-ring {
+  background: var(--neutral-soft);
+}
+
+.spending-ring-slice {
+  background: conic-gradient(
+    transparent 0turn var(--spending-slice-start),
+    var(--category-stroke, var(--accent)) var(--spending-slice-start) var(--spending-slice-end),
+    transparent var(--spending-slice-end) 1turn
+  );
+}
+
+.spending-ring::after {
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  background: var(--surface);
+  content: "";
+}
+
+.spending-ring-caption {
+  position: relative;
+  display: grid;
+  width: 68%;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.spending-number {
+  min-width: 0;
+  color: var(--ink);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.spending-ring-caption .spending-number {
+  font-size: clamp(21px, 6.4vw, 29px);
+  line-height: 1.14;
+}
+
+.spending-category-list, .spending-day-list {
+  padding: 0;
+  list-style: none;
+}
+
+.spending-category-list > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(40px, auto);
+  align-items: center;
+  gap: 6px 9px;
+  padding-block: 8px;
+}
+
+.spending-category-list > li + li,
+.spending-day-row + .spending-day-row {
+  border-top: 1px solid var(--line);
+}
+
+.spending-category-label {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  overflow-wrap: anywhere;
+}
+
+.spending-category-label .category-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+
+.spending-category-label .category-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.spending-category-list .spending-number,
+.spending-percent {
+  text-align: end;
+}
+
+.spending-percent,
+.spending-daily-summary {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.spending-daily-summary {
+  margin-bottom: 8px;
+}
+
+.spending-day-row {
+  display: grid;
+  grid-template-columns: minmax(0, 108px) minmax(0, 1fr) minmax(0, auto);
+  align-items: center;
+  gap: 6px 10px;
+  padding-block: 10px;
+}
+
+.spending-day-label {
+  display: flex;
+  min-width: 0;
+  grid-area: 1 / 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 5px;
+  color: var(--ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.spending-day-row .spending-number {
+  grid-area: 1 / 3;
+  text-align: end;
+}
+
+.spending-peak {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--cocoa-soft);
+  color: var(--cocoa);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.spending-day-track {
+  display: block;
+  height: 7px;
+  grid-area: 1 / 2;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--neutral-soft);
+}
+
+.spending-day-track > span {
+  display: block;
+  width: var(--spending-day-width);
+  height: 100%;
+  border-radius: inherit;
+  background: #719783;
+}
+
+.spending-day-row[data-peak="true"] .spending-number {
+  color: var(--cocoa);
+}
+
+.spending-day-row[data-peak="true"] .spending-day-track > span {
+  background: var(--cocoa);
+}
+
+@media (max-width: 760px) {
+  .spending-panels {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 410px) {
+  .spending-day-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  }
+
+  .spending-day-row .spending-number {
+    grid-area: 1 / 2;
+  }
+
+  .spending-day-track {
+    grid-area: 2 / 1 / 3 / -1;
+  }
+}
+
 </style>
   <link rel="manifest" href="./manifest.webmanifest">
   <meta name="trip-release-feed" content="./release.json">
@@ -3590,7 +4324,7 @@ body:has(.travel-nav) .status {
 
   <dialog class="sheet settlement-sheet" id="settlement-sheet" aria-labelledby="settlement-heading">
     <div class="sheet-head">
-      <h2 id="settlement-heading">AA 结算</h2>
+      <h2 id="settlement-heading">查看结算</h2>
       <button type="button" class="button icon-button quiet" data-close aria-label="关闭">×</button>
     </div>
     <div class="sheet-body" id="settlement-body"></div>
@@ -3675,7 +4409,7 @@ body:has(.travel-nav) .status {
 
   <p id="status" class="status" role="status" aria-live="polite" hidden></p>
   <noscript>请在支持 JavaScript 的浏览器中打开旅行账本。</noscript>
-  <script type="application/json" id="app-release">{"version":14,"date":"2026-11-24","notes":["行程和吃什么共用旅行封面，从右上角的旅行设置更换照片。","AI 记的麦克风默认直接识别语音，也可选用已配置的接口转写录音。","记账标题区合并四张彩色汇总卡，AA 结算和记一笔移到右上方。"]}</script>
+  <script type="application/json" id="app-release">{"version":15,"date":"2026-11-24","notes":["记账首页并排显示实际支出、分摊总数和实际单人数额，下方列出参与分摊的成员和支出明细。","查看结算显示转账建议、每人已付和应摊金额，并支持查看个人明细。","消费统计新增分类占比和每日支出，保留记账页的简洁布局。"]}</script>
   <script>
 (() => {
   'use strict';
@@ -3761,11 +4495,12 @@ body:has(.travel-nav) .status {
       id, name, paidCents: 0, shareCents: 0, netCents: 0,
     }]));
     const categoryTotals = new Map();
+    const dailyTotals = new Map();
     const sharedShares = new Map();
     let totalCents = 0;
     let sharedCents = 0;
 
-    for (const { amountCents, payerId, participantIds, category } of trip.expenses) {
+    for (const { amountCents, payerId, participantIds, category, date } of trip.expenses) {
       const payer = members.get(payerId);
       if (!payer || !isExpenseAmount(amountCents) || !participantIds?.length
         || participantIds.some((id) => !members.has(id))) continue;
@@ -3777,6 +4512,9 @@ body:has(.travel-nav) .status {
       totalCents += amountCents;
       const label = category || "其他";
       categoryTotals.set(label, (categoryTotals.get(label) || 0) + amountCents);
+      if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        dailyTotals.set(date, (dailyTotals.get(date) || 0) + amountCents);
+      }
       if (participants.length > 1) {
         sharedCents += amountCents;
         for (const id of participants) sharedShares.set(id, (sharedShares.get(id) || 0) + shares[id]);
@@ -3788,7 +4526,7 @@ body:has(.travel-nav) .status {
 
     const balances = [...members.values()];
     for (const balance of balances) balance.netCents = balance.paidCents - balance.shareCents;
-    return { totalCents, sharedCents, sharedShares, balances, transfers: suggestTransfers(balances), categoryTotals };
+    return { totalCents, sharedCents, sharedShares, balances, transfers: suggestTransfers(balances), categoryTotals, dailyTotals };
   }
 
   globalThis.TripLedger = Object.freeze({ parseAmount, parseQuickEntry, splitEven, summarize });
@@ -8228,6 +8966,223 @@ body:has(.travel-nav) .status {
 (() => {
   "use strict";
 
+  const modes = [["personal", "按个人"], ["combined", "合并结算"]];
+  const arrowIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15m-5-5 5 5-5 5"/></svg>';
+
+  function avatar(name, escapeHtml) {
+    const letter = [...name.trim()][0] || "？";
+    return `<span class="settlement-avatar" aria-hidden="true" data-initial="${escapeHtml(letter)}"></span>`;
+  }
+
+  function expenseDetails(trip, names) {
+    const detail = new Map([...names.keys()].map((id) => [id, []]));
+    const records = [...trip.expenses].sort((a, b) => b.date.localeCompare(a.date));
+    for (const expense of records) {
+      const {amountCents, payerId, participantIds} = expense;
+      if (!names.has(payerId) || !participantIds?.length || participantIds.some((id) => !names.has(id))) continue;
+      const shares = globalThis.TripLedger.splitEven(amountCents, participantIds);
+      const members = Object.keys(shares);
+      if (!members.length) continue;
+      for (const id of new Set([payerId, ...members])) {
+        detail.get(id).push({expense, paid: id === payerId ? amountCents : null,
+          share: Object.hasOwn(shares, id) ? shares[id] : null});
+      }
+    }
+    return detail;
+  }
+
+  function transferList(transfers, names, {escapeHtml, money}) {
+    return `<ul class="settlement-list settlement-transfers">${transfers.map(({fromId, toId, amountCents}) => {
+      const from = names.get(fromId);
+      const to = names.get(toId);
+      return `<li class="transfer-row">
+        <span class="settlement-party settlement-sender">${avatar(from, escapeHtml)}<strong>${escapeHtml(from)}</strong></span>
+        <span class="settlement-direction"><span class="visually-hidden">转给</span>${arrowIcon}</span>
+        <span class="settlement-party settlement-receiver">${avatar(to, escapeHtml)}<strong>${escapeHtml(to)}</strong></span>
+        <strong class="settlement-transfer-amount">${money(amountCents)}</strong>
+      </li>`;
+    }).join("")}</ul>`;
+  }
+
+  function personalTransfers(transfers, member, names, {escapeHtml, money}) {
+    const rows = transfers.filter(({fromId, toId}) => fromId === member.id || toId === member.id);
+    if (!rows.length) return '<p class="hint">无需转账。</p>';
+    return `<ul class="settlement-person-transfers">${rows.map(({fromId, toId, amountCents}) => {
+      const sends = fromId === member.id;
+      const other = names.get(sends ? toId : fromId);
+      return `<li><span>${sends ? "建议转给" : "建议向"} <strong>${escapeHtml(other)}</strong>${sends ? "" : " 收款"}</span>
+        <strong>${money(amountCents)}</strong></li>`;
+    }).join("")}</ul>`;
+  }
+
+  function personalExpenses(rows, names, {escapeHtml, money, readableDate}) {
+    if (!rows.length) return '<p class="hint">还没有这位同行人的支出明细。</p>';
+    return `<ul class="settlement-person-expenses">${rows.map(({expense, paid, share}) => {
+      const payer = names.get(expense.payerId);
+      return `<li>
+        <div><strong>${escapeHtml(expense.title)}</strong><p class="hint">${escapeHtml(readableDate(expense.date))} · ${escapeHtml(payer)}垫付</p></div>
+        <dl>${paid === null ? "" : `<div><dt>已付</dt><dd>${money(paid)}</dd></div>`}
+          ${share === null ? "" : `<div><dt>应摊</dt><dd>${money(share)}</dd></div>`}</dl>
+      </li>`;
+    }).join("")}</ul>`;
+  }
+
+  function memberCards(summary, details, names, ctx, mode) {
+    const {escapeHtml, money} = ctx;
+    return `<div class="settlement-members">${summary.balances.map((member, index) => {
+      const {id, name, paidCents, shareCents, netCents} = member;
+      const rows = details.get(id);
+      const netClass = netCents > 0 ? "receive" : netCents < 0 ? "send" : "balanced";
+      const balance = netCents ? `${netCents > 0 ? "应收" : "应付"} ${money(Math.abs(netCents))}` : "已平衡";
+      return `<article class="settlement-member" data-balance="${netClass}">
+        <div class="settlement-member-top">
+          ${avatar(name, escapeHtml)}
+          <div class="settlement-member-title"><h4>${escapeHtml(name)}</h4>
+            <p>已付 ${money(paidCents)} <span aria-hidden="true">·</span> 应摊 ${money(shareCents)}</p></div>
+          <span class="settlement-net">${balance}</span>
+        </div>
+        <details class="settlement-person"${mode === "personal" && index === 0 ? " open" : ""}>
+          <summary>个人明细 <span>${rows.length} 笔</span></summary>
+          <div class="settlement-person-body">
+            <h5>建议转账</h5>${personalTransfers(summary.transfers, member, names, ctx)}
+            <h5>支出分摊</h5>${personalExpenses(rows, names, ctx)}
+          </div>
+        </details>
+      </article>`;
+    }).join("")}</div>`;
+  }
+
+  function render(trip, summary, ctx, mode = "combined") {
+    const {escapeHtml, money} = ctx;
+    const selected = mode === "personal" ? "personal" : "combined";
+    const names = new Map(trip.members.map(({id, name}) => [id, name]));
+    const details = expenseDetails(trip, names);
+    const transferSection = selected === "combined" ? `<section class="settlement-block" aria-labelledby="settlement-transfers-title">
+      <div class="settlement-title-row"><h3 id="settlement-transfers-title">建议转账</h3>${summary.transfers.length ? `<span>${summary.transfers.length} 笔</span>` : ""}</div>
+      ${summary.transfers.length ? transferList(summary.transfers, names, ctx)
+        : `<p class="settlement-clear">${trip.expenses.length ? "大家的垫付和分摊已平衡。" : "记下第一笔支出后，这里会显示结算结果。"}</p>`}
+    </section>` : "";
+    return `<div class="settlement-top">
+      <div class="settlement-trip"><h3>${escapeHtml(trip.name)}</h3><p>${trip.members.length} 人 · ${trip.expenses.length} 笔支出</p></div>
+      <div class="settlement-modes" role="group" aria-label="结算查看方式">
+        ${modes.map(([name, label]) => `<button type="button" class="button quiet" data-action="settlement-mode" data-mode="${name}" aria-pressed="${name === selected}">${label}</button>`).join("")}
+      </div>
+      <dl class="settlement-totals"><div><dt>总支出</dt><dd>${money(summary.totalCents)}</dd></div>
+        <div><dt>共同分担</dt><dd>${money(summary.sharedCents)}</dd></div></dl>
+    </div>
+    ${transferSection}
+    <section class="settlement-block" aria-labelledby="settlement-members-title">
+      <div class="settlement-title-row"><h3 id="settlement-members-title">${selected === "personal" ? "按同行人查看" : "成员汇总"}</h3></div>
+      ${memberCards(summary, details, names, ctx, selected)}
+    </section>
+    <div class="settlement-bottom"><button type="button" class="button quiet" data-view="spending">查看消费统计</button></div>
+    <div class="copy-fallback" id="copy-fallback" hidden>
+      <label class="field">结算文本<textarea id="copy-text" rows="5" readonly></textarea></label>
+      <p class="hint">长按已选中的文字即可复制。</p>
+    </div>`;
+  }
+
+  globalThis.TravelSettlementView = Object.freeze({render});
+})();
+
+;
+(() => {
+  "use strict";
+
+  function amounts(totals) {
+    return [...totals].filter(([, cents]) => Number.isSafeInteger(cents) && cents > 0);
+  }
+
+  function shareLabel(cents, total) {
+    const percent = cents / total * 100;
+    if (percent < 0.1) return "不足 0.1%";
+    return `${Number(percent.toFixed(1))}%`;
+  }
+
+  function categoryPanel(total, categories, {escapeHtml, money}) {
+    const {tone, mark} = globalThis.TravelCategories;
+    let cumulative = 0;
+    const slices = categories.map(([label, cents], index) => {
+      const start = cumulative / total;
+      cumulative += cents;
+      const end = index === categories.length - 1 ? 1 : cumulative / total;
+      return `<span class="spending-ring-slice" data-tone="${tone(label)}"
+        style="--spending-slice-start:${start}turn;--spending-slice-end:${end}turn"></span>`;
+    }).join("");
+    const topAmount = categories[0]?.[1];
+    const tied = topAmount === categories[1]?.[1];
+    const highest = categories[0]?.[0];
+    const rows = categories.map(([label, cents]) => `<li data-tone="${tone(label)}">
+      <span class="spending-category-label"><span class="category-icon" aria-hidden="true">${mark(label)}</span>${escapeHtml(label)}</span>
+      <strong class="spending-number">${escapeHtml(money(cents))}</strong>
+      <span class="spending-percent">${shareLabel(cents, total)}</span>
+    </li>`).join("");
+
+    return `<section class="spending-panel" aria-labelledby="spending-categories">
+      <h2 id="spending-categories">分类支出</h2>
+      <figure class="spending-ring-chart">
+        <div class="spending-ring" aria-hidden="true">${slices}</div>
+        <figcaption class="spending-ring-caption">
+          <span>总花费</span>
+          <strong class="spending-number">${escapeHtml(money(total))}</strong>
+          ${highest ? `<span>${tied ? "并列最多" : "花费最多"} · ${escapeHtml(highest)}</span>` : ""}
+        </figcaption>
+      </figure>
+      ${rows ? `<ul class="spending-category-list">${rows}</ul>` : ""}
+    </section>`;
+  }
+
+  function dailyPanel(days, {escapeHtml, money, readableDate}) {
+    const peak = days.reduce((highest, [, cents]) => Math.max(highest, cents), 0);
+    const dailyTotal = days.reduce((sum, [, cents]) => sum + cents, 0);
+    const average = days.length ? Math.round(dailyTotal / days.length) : 0;
+    const spansYears = new Set(days.map(([date]) => date.slice(0, 4))).size > 1;
+    const rows = days.map(([date, cents]) => `<li class="spending-day-row"${cents === peak ? ' data-peak="true"' : ""}>
+      <span class="spending-day-label">
+        <time datetime="${escapeHtml(date)}">${escapeHtml(`${spansYears ? `${date.slice(0, 4)}年` : ""}${readableDate(date)}`)}</time>
+        ${cents === peak ? '<span class="spending-peak">最高</span>' : ""}
+      </span>
+      <strong class="spending-number">${escapeHtml(money(cents))}</strong>
+      <span class="spending-day-track" aria-hidden="true">
+        <span style="--spending-day-width:${cents / peak * 100}%"></span>
+      </span>
+    </li>`).join("");
+
+    return `<section class="spending-panel" aria-labelledby="spending-daily">
+      <h2 id="spending-daily">每天花了多少</h2>
+      ${days.length ? `<p class="spending-daily-summary">有消费的 ${days.length} 天，日均 <strong class="spending-number">${escapeHtml(money(average))}</strong></p>
+      <ol class="spending-day-list">${rows}</ol>` : '<p class="hint">这趟旅行的支出没有可用的日期。</p>'}
+    </section>`;
+  }
+
+  function render(trip, summary, presentation) {
+    const {escapeHtml} = presentation;
+    const total = summary?.totalCents;
+    const hasExpenses = Number.isSafeInteger(total) && total > 0;
+    const heading = `<div class="spending-heading">
+      <button type="button" class="button quiet spending-back" data-view="ledger"><span aria-hidden="true">‹</span> 返回记账</button>
+      <h1 id="spending-title" tabindex="-1">消费统计</h1>
+      ${trip?.name ? `<p class="hint">${escapeHtml(trip.name)}</p>` : ""}
+    </div>`;
+    let body = '<div class="spending-panel empty"><p>记下一笔支出后，就能查看分类占比和每日花费。</p></div>';
+    if (hasExpenses) {
+      const categories = amounts(summary.categoryTotals).sort(([a, left], [b, right]) => right - left || a.localeCompare(b, "zh-CN"));
+      const days = amounts(summary.dailyTotals).sort(([left], [right]) => left.localeCompare(right));
+      body = `<div class="spending-panels">
+        ${categoryPanel(total, categories, presentation)}
+        ${dailyPanel(days, presentation)}
+      </div>`;
+    }
+    return `<section class="spending-stats" aria-labelledby="spending-title">${heading}${body}</section>`;
+  }
+
+  globalThis.TravelSpendingStats = Object.freeze({render});
+})();
+
+;
+(() => {
+  "use strict";
+
   const { parseAmount, parseQuickEntry, splitEven, summarize } = globalThis.TripLedger;
   const KEY = "qingji-trip-ledger-v1";
   const TAB_KEY = "qingji-trip-ledger-tab";
@@ -8255,13 +9210,16 @@ body:has(.travel-nav) .status {
     ["ledger", "记账", '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'],
     ["settings", "设置", '<circle cx="12" cy="12" r="4"/><path d="m9.5 3-1 2-2 .7-2.2-.1L2 9l1.2 2v2L2 15l2.3 3.4 2.2-.1 2 .7 1 2h5l1-2 2-.7 2.2.1L22 15l-1.2-2v-2L22 9l-2.3-3.4-2.2.1-2-.7-1-2Z"/>']
   ];
-  const views = new Set(navItems.map(([id]) => id));
+  const views = new Set([...navItems.map(([id]) => id), "spending"]);
   const {expenseNames: categories, mark: categoryMark, tone: categoryTone} = globalThis.TravelCategories;
-  const currency = new Intl.NumberFormat("zh-CN", {
+  const yuanFormat = {
     style: "currency",
     currency: "CNY",
     currencyDisplay: "narrowSymbol"
-  });
+  };
+  const currency = new Intl.NumberFormat("zh-CN", yuanFormat);
+  const roundedCurrency = new Intl.NumberFormat("zh-CN", {...yuanFormat, minimumFractionDigits: 1, maximumFractionDigits: 1});
+  const participantTones = ["transport", "lodging", "tickets", "shopping", "food", "daily", "other"];
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -8299,6 +9257,7 @@ body:has(.travel-nav) .status {
   let expenseOnSaved;
   let expenseLinks = {};
   let settlementTripId = null;
+  let settlementMode = "combined";
   let statusTimer;
 
   function setMessage(element, message = "") {
@@ -8451,24 +9410,18 @@ body:has(.travel-nav) .status {
   }
 
   function overviewMarkup({totalCents, sharedCents, sharedShares}) {
-    const shares = [...sharedShares.values()];
-    const lowest = shares.length ? Math.min(...shares) : 0;
-    const highest = shares.length ? Math.max(...shares) : 0;
-    const varied = lowest !== highest;
-    const perPerson = varied ? `${money(lowest)}<wbr>–${money(highest)}` : money(lowest);
+    const perPerson = sharedShares.size ? sharedCents / sharedShares.size : 0;
     const cards = [
-      ["tone-total", "钱包", "实际支出", money(totalCents), ""],
-      ["tone-shared", "分摊", "共同分担总数", money(sharedCents), ""],
-      ["tone-average", "人均", "单人分担数额", perPerson, varied ? "按各笔实际分摊" : ""],
-      ["tone-count", "同行", "分摊人数", `${shares.length} 人`, ""]
+      ["tone-total", "钱包", "实际支出", money(totalCents)],
+      ["tone-shared", "分摊", "分摊总数", money(sharedCents)],
+      ["tone-average", "人均", "实际单人数额", roundedCurrency.format(perPerson / 100)]
     ];
     return `<section class="trip-overview" aria-label="全程账本概览">
-      ${cards.map(([className, icon, label, value, detail]) => `<div class="overview-card ${className}" data-tone="${categoryTone(icon)}">
+      ${cards.map(([className, icon, label, value]) => `<div class="overview-card ${className}" data-tone="${categoryTone(icon)}">
         <div class="overview-copy">
           <span class="overview-icon" aria-hidden="true">${categoryMark(icon)}</span>
           <span class="overview-label">${label}</span>
-          <strong class="overview-value${className === "tone-total" ? " hero-number" : ""}${detail ? " overview-range" : ""}">${value}</strong>
-          ${detail ? `<span class="overview-detail">${detail}</span>` : ""}
+          <strong class="overview-value${className === "tone-total" ? " hero-number" : ""}">${value}</strong>
         </div>
       </div>`).join("")}
     </section>`;
@@ -8578,9 +9531,10 @@ body:has(.travel-nav) .status {
   }
 
   function navigationMarkup() {
+    const currentTab = activeView === "spending" ? "ledger" : activeView;
     return `<nav class="travel-nav" aria-label="主导航">
       ${navItems.map(([id, label, icon]) => `<button type="button" data-view="${id}"
-        ${id === activeView ? 'aria-current="page"' : ''}>
+        ${id === currentTab ? 'aria-current="page"' : ''}>
         <svg class="travel-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon}</svg>
         <span>${label}</span>
@@ -8633,6 +9587,18 @@ body:has(.travel-nav) .status {
       return;
     }
 
+    if (activeView === "spending") {
+      let statistics;
+      try {
+        statistics = globalThis.TravelSpendingStats.render(trip, summarize(trip), {escapeHtml, money, readableDate});
+      } catch {
+        statistics = `<p class="storage-error" role="alert">暂时无法统计这本账的支出。</p>
+          <button type="button" class="button tonal" data-view="ledger">返回记账</button>`;
+      }
+      content.innerHTML = statistics + navigationMarkup();
+      return;
+    }
+
     const places = [...new Set(trip.expenses.map((item) => item.place).filter(Boolean))];
     const heroPlaces = [...new Set([
       ...places,
@@ -8646,7 +9612,7 @@ body:has(.travel-nav) .status {
       <p class="hero-meta">${trip.members.length} 人同行${heroPlaces.length ? ` <span aria-hidden="true">·</span> ${heroPlaces.length} 个地点` : ""}</p>
     </div>`;
     if (activeView === "ledger") {
-      content.innerHTML = ledgerMarkup(trip, route, heroCopy) + navigationMarkup();
+      content.innerHTML = ledgerMarkup(trip, heroCopy) + navigationMarkup();
       return;
     }
     const dateRange = formatTripDates(trip);
@@ -8668,7 +9634,7 @@ body:has(.travel-nav) .status {
     content.innerHTML = hero + page[activeView]() + navigationMarkup();
   }
 
-  function ledgerMarkup(trip, route, heroCopy) {
+  function ledgerMarkup(trip, heroCopy) {
     let summary;
     try {
       summary = summarize(trip);
@@ -8685,14 +9651,21 @@ body:has(.travel-nav) .status {
         ${heroCopy}
         <div class="hero-context">
           <div class="hero-actions ledger-hero-actions">
-            <button type="button" class="button tonal" data-action="settle">AA 结算</button>
             <button type="button" class="button primary" data-action="new-expense">＋ 记一笔</button>
           </div>
         </div>
       </div>
       ${overviewMarkup(summary)}
+      <div class="ledger-hero-footer">
+        <p class="hint">单人金额按参与多人分摊的成员平均</p>
+        <div class="ledger-detail-actions">
+          <button type="button" class="button tonal" data-action="settle">查看结算</button>
+          <button type="button" class="button quiet" data-view="spending">消费统计</button>
+        </div>
+      </div>
     </section>
-    <div class="workspace">
+    <div class="ledger-stack">
+      ${participantsMarkup(trip.members, summary.sharedShares)}
       <section class="ledger-panel" aria-labelledby="ledger-title">
         <header class="ledger-heading">
           <div class="ledger-title-group"><h2 id="ledger-title">支出明细</h2><span class="count">${visibleExpenses.length} 笔</span></div>
@@ -8700,32 +9673,17 @@ body:has(.travel-nav) .status {
         </header>
         ${expensesMarkup(visibleExpenses, names, Boolean(trip.expenses.length))}
       </section>
-      <div class="ledger-summary">
-        ${categoryTotalsMarkup(summary)}
-        <section class="side-panel" aria-labelledby="members-title">
-          <div class="side-heading"><h2 id="members-title">同行人分摊</h2></div>
-          <ul class="member-list">${summary.balances.map((member) => `<li class="member-row">
-            <span class="member-initial" aria-hidden="true">${escapeHtml([...member.name][0] || "")}</span>
-            <div><strong>${escapeHtml(member.name)}</strong>
-              <small>已垫付 ${money(member.paidCents)}</small>
-              <small>应承担 ${money(member.shareCents)}</small>
-            </div>
-            ${trip.expenses.length ? `<span class="member-balance" data-balance="${Math.sign(member.netCents)}">${balanceLabel(member.netCents)}</span>` : ""}
-          </li>`).join("")}</ul>
-          ${route ? `<a class="button tonal itinerary-link" href="${escapeHtml(route)}" target="_blank" rel="noopener noreferrer">打开行程</a>` : ""}
-        </section>
-      </div>
     </div>`;
   }
 
-  function categoryTotalsMarkup({categoryTotals, totalCents}) {
-    const totals = [...categoryTotals].sort((left, right) => right[1] - left[1]);
-    return `<section class="stats-panel" aria-labelledby="stats-categories">
-      <h2 id="stats-categories">全程分类支出</h2>
-      ${totals.length ? `<ul class="stats-list">${totals.map(([label, cents]) => `<li data-tone="${categoryTone(label)}">
-        <span class="stats-category"><span class="category-icon">${categoryMark(label)}</span>${escapeHtml(label)}</span><strong class="stats-amount">${money(cents)}</strong>
-        <meter class="stats-bar" min="0" max="${totalCents}" value="${cents}" aria-label="${escapeHtml(label)}占总支出比例"></meter>
-      </li>`).join("")}</ul>` : '<p class="hint">记下第一笔支出后，这里会显示各类花销。</p>'}
+  function participantsMarkup(members, sharedShares) {
+    const participants = members.filter(({id}) => sharedShares.has(id));
+    return `<section class="ledger-participants" aria-labelledby="members-title">
+      <h2 id="members-title">参与分摊</h2>
+      ${participants.length ? `<ul class="ledger-participant-list">${participants.map(({name}, index) => `<li class="ledger-participant">
+        <span class="ledger-avatar" data-tone="${participantTones[index % participantTones.length]}" aria-hidden="true">${escapeHtml([...name][0] || "")}</span>
+        <span>${escapeHtml(name)}</span>
+      </li>`).join("")}</ul>` : '<p class="hint">暂无参与多人分摊的成员</p>'}
     </section>`;
   }
 
@@ -8988,6 +9946,7 @@ body:has(.travel-nav) .status {
 
   function openSettlement(trip) {
     settlementTripId = trip.id;
+    settlementMode = "combined";
     setMessage($("settlement-notice"));
     renderSettlement(trip);
     settlementSheet.showModal();
@@ -8995,32 +9954,7 @@ body:has(.travel-nav) .status {
 
   function renderSettlement(trip) {
     const summary = summarize(trip);
-    const names = Object.fromEntries(trip.members.map(({id, name}) => [id, name]));
-    const transfers = summary.transfers.length
-      ? `<ul class="settlement-list">${summary.transfers.map(({fromId, toId, amountCents}) =>
-        `<li class="transfer-row">
-          <span class="transfer-names"><strong>${escapeHtml(names[fromId])}</strong> 转给 <strong>${escapeHtml(names[toId])}</strong></span>
-          <strong>${money(amountCents)}</strong></li>`).join("")}</ul>`
-      : `<p class="settlement-clear">${trip.expenses.length ? "大家的垫付和分摊已平衡。" : "记下第一笔支出后，这里会显示结算结果。"}</p>`;
-    $("settlement-heading").textContent = "AA 结算";
-    $("settlement-body").innerHTML = `<div class="settlement-intro">
-        <h3>${escapeHtml(trip.name)}</h3><p>${trip.members.length} 人 · ${trip.expenses.length} 笔 · 总支出 ${money(summary.totalCents)}</p></div>
-      <h3>转账清单</h3>
-      ${transfers}
-      <h3>成员汇总</h3>
-      <div class="table-wrap"><table class="settlement-balance">
-        <thead><tr><th scope="col">同行人</th><th scope="col">已垫付</th><th scope="col">应分摊</th><th scope="col">结算余额</th></tr></thead>
-        <tbody>${summary.balances.map((member) => `<tr>
-          <th scope="row">${escapeHtml(member.name)}</th>
-          <td>${money(member.paidCents)}</td>
-          <td>${money(member.shareCents)}</td>
-          <td>${balanceLabel(member.netCents)}</td>
-        </tr>`).join("")}</tbody>
-      </table></div>
-      <div class="copy-fallback" id="copy-fallback" hidden>
-        <label class="field">结算文本<textarea id="copy-text" rows="5" readonly></textarea></label>
-        <p class="hint">长按已选中的文字即可复制。</p>
-      </div>`;
+    $("settlement-body").innerHTML = globalThis.TravelSettlementView.render(trip, summary, {escapeHtml, money, readableDate}, settlementMode);
     $("copy-settlement").disabled = !trip.expenses.length;
     $("export-settlement").disabled = !trip.expenses.length;
   }
@@ -9290,6 +10224,16 @@ body:has(.travel-nav) .status {
       }
       case "delete-expense": return deleteExpense();
       case "settle": if (trip) openSettlement(trip); return;
+      case "settlement-mode": {
+        const active = getTrip(settlementTripId);
+        const mode = button.dataset.mode;
+        if (settlementSheet.open && active && ["combined", "personal"].includes(mode) && mode !== settlementMode) {
+          settlementMode = mode;
+          renderSettlement(active);
+          settlementSheet.querySelector("[data-action='settlement-mode'][aria-pressed='true']")?.focus({preventScroll: true});
+        }
+        return;
+      }
       case "copy": {
         const active = getTrip(settlementTripId);
         if (active) void copySettlement(active);
@@ -9344,8 +10288,11 @@ body:has(.travel-nav) .status {
     } else if (button.dataset.split) {
       updateSelected(button.dataset.split);
     } else if (button.dataset.view) {
-      setView(button.dataset.view);
-      $("content").querySelector(".travel-nav [aria-current='page']")?.focus({preventScroll: true});
+      const view = button.dataset.view;
+      if (view === "spending" && settlementSheet.open && settlementSheet.contains(button)) settlementSheet.close();
+      setView(view);
+      const target = view === "spending" ? $("spending-title") : null;
+      (target || $("content").querySelector(".travel-nav [aria-current='page']"))?.focus({preventScroll: true});
     } else if (button.dataset.filter === "category") {
       const {value} = button.dataset;
       categoriesFilter = value;
